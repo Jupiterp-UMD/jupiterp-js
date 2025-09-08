@@ -5,12 +5,12 @@ import { SortBy } from "./sort-by";
 /**
  * Configuration for a request to any of the courses endpoints.
  */
-export class CoursesConfig {
-    courseCodes: Set<string> | null = null;
-    prefix: string | null = null;
-    genEds: Set<GenEd> | null = null;
-    creditFilters: Set<CreditFilter> | null = null;
-    limit: number | null = null;
-    offset: number | null = null;
-    sortBy: SortBy | null = null;
+export interface CourseConfig {
+    courseCodes: Set<string> | null;
+    prefix: string | null;
+    genEds: Set<GenEd> | null;
+    creditFilters: CreditFilter | null;
+    limit: number | null;
+    offset: number | null;
+    sortBy: SortBy | null;
 }
