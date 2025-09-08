@@ -1,0 +1,90 @@
+/**
+ * An abstract superclass for creating filters to be applied to API requests.
+ * Currently useful for filtering courses by credits and instructors by rating. 
+ */
+abstract class ApiFilter {
+    private columnName: string;
+    filtersParams: string[] = [];
+
+    constructor(columnName: string) {
+        this.columnName = columnName;
+    }
+
+    public stringify(): string {
+        return this.filtersParams.join("&");
+    }
+
+    public equalTo(value: number): this {
+        this.filtersParams.push(`${this.columnName}=eq.${value}`);
+        return this;
+    }
+
+    public lessThanOrEqualTo(value: number): this {
+        this.filtersParams.push(`${this.columnName}=lte.${value}`);
+        return this;
+    }
+
+    public greaterThanOrEqualTo(value: number): this {
+        this.filtersParams.push(`${this.columnName}=gte.${value}`);
+        return this;
+    }
+
+    public lessThan(value: number): this {
+        this.filtersParams.push(`${this.columnName}=lt.${value}`);
+        return this;
+    }
+
+    public greaterThan(value: number): this {
+        this.filtersParams.push(`${this.columnName}=gt.${value}`);
+        return this;
+    }
+
+    public notEqualTo(value: number): this {
+        this.filtersParams.push(`${this.columnName}=neq.${value}`);
+        return this;
+    }
+}
+
+/**
+ * A filter for the number of credits in a course. Can be used in a 
+ * `CoursesConfig`.
+ * ```ts
+ * const creditFilter = 
+ *  new CreditFilter().greaterThanOrEqualTo(2).lessThanOrEqualTo(4);
+ * console.log(creditFilter.stringify()); // "credits=gte.2&credits=lte.4"
+ * ```
+ * This does not enforce that the filters make sense to be used together. For
+ * instance, it is possible to create this:
+ * ```ts
+ * const creditFilter = 
+ *  new CreditFilter().equalTo(3).notEqualTo(3);
+ * console.log(creditFilter.stringify()); // "credits=eq.3&credits=neq.3"
+ * ```
+ * which will never return any results.
+ */
+export class CreditFilter extends ApiFilter {
+    constructor() {
+        super("credits");
+    }
+}
+
+/**
+ * A filter for the average rating of an instructor. Can be used in an `InstructorsConfig`.
+ * ```ts
+ * const ratingFilter = new RatingFilter().greaterThanOrEqualTo(4.0).lessThan(5.0);
+ * console.log(ratingFilter.stringify()); // "ratings=gte.4.0&ratings=lt.5.0"
+ * ```
+ * This does not enforce that the filters make sense to be used together. For
+ * instance, it is possible to create this:
+ * ```ts
+ * const ratingFilter = 
+ *  new RatingFilter().equalTo(3).notEqualTo(3);
+ * console.log(ratingFilter.stringify()); // "credits=eq.3&credits=neq.3"
+ * ```
+ * which will never return any results.
+ */
+export class RatingFilter extends ApiFilter {
+    constructor() {
+        super("ratings");
+    }
+}

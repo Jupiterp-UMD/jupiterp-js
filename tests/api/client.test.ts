@@ -1,5 +1,4 @@
-// JupiterpClientV0.test.ts
-import { JupiterpClientV0 } from "../src/client";
+import { JupiterpClientV0 } from "../../src";
 import { jest, test, expect, describe, beforeEach } from "@jest/globals";
 
 describe("JupiterpClientV0", () => {
@@ -40,7 +39,7 @@ describe("JupiterpClientV0", () => {
     fetchMock.mockResolvedValueOnce(mockResponse);
 
     const client = new JupiterpClientV0("https://custom-url.com");
-    const response = await client.connect();
+    const response = await client.health();
 
     expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/");
     expect(response).toBe(mockResponse);
