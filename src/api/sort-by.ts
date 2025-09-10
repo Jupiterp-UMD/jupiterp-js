@@ -6,7 +6,6 @@
  *   new SortBy()
  *     .ascending("name")
  *     .descending("min_credits");
- * console.log(sortBy.stringify()); // "sortBy=name.asc,min_credits.desc"
  * ```
  */
 export class SortBy {

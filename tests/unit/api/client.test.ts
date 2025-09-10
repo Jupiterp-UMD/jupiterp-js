@@ -45,7 +45,7 @@ describe("JupiterpClientV0", () => {
     expect(response).toBe(mockResponse);
   });
 
-  test("successfull instructors fetch has correct response", async () => {
+  test("successfully instructors fetch has correct response", async () => {
     const mockInstructors = [
       { slug: "doe", name: "John Doe", average_rating: 4.3 },
       { slug: "smith", name: "Jane Smith", average_rating: 4.7 },
@@ -85,5 +85,27 @@ describe("JupiterpClientV0", () => {
     expect(resp.statusCode).toBe(500);
     expect(resp.statusMessage).toBe("Internal Server Error");
     expect(resp.data).toBeNull();
+  });
+
+  test("successfully fetches active instructors", async () => {
+    const mockInstructors = [
+      { slug: "doe", name: "John Doe", average_rating: 4.3 },
+    ];
+    const mockResponse = new Response(JSON.stringify(mockInstructors), { status: 200, statusText: "OK" });
+    fetchMock.mockResolvedValueOnce(mockResponse);
+
+    const client = new JupiterpClientV0("https://custom-url.com");
+    const resp = await client.activeInstructors({
+      instructorNames: null,
+      instructorSlugs: new Set(["doe"]),
+      ratings: null,
+      limit: 5,
+      offset: 0,
+      sortBy: null,
+    });
+    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/instructors/active?instructorSlugs=doe&limit=5&offset=0");
+    expect(resp.statusCode).toBe(200);
+    expect(resp.statusMessage).toBe("OK");
+    expect(resp.data).toEqual(mockInstructors); 
   });
 });

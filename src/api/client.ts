@@ -20,9 +20,9 @@ export class JupiterpClientV0 {
         return fetch(this.dbUrl + "/v0/");
     }
 
-    public async instructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+    async instructorsGeneric(path: string, cfg: InstructorConfig): Promise<InstructorResponse> {
         const params = instructorConfigToQueryParams(cfg);
-        const url = `${this.dbUrl}/v0/instructors?${params.toString()}`;
+        const url = `${this.dbUrl}/v0/${path}?${params.toString()}`;
         const resp = await fetch(url);
         const statusCode = resp.status;
         const statusMessage = resp.statusText;
@@ -32,5 +32,27 @@ export class JupiterpClientV0 {
 
         const data = (await resp.json()) as Instructor[];
         return new ApiResponse<Instructor>(statusCode, statusMessage, data);
+    }
+
+    /**
+     * Get a list of all instructors and their average ratings, including
+     * instructors not actively teaching any courses.
+     * @param cfg A configuration object specifying filters and options for the
+     * request.
+     * @returns A promise that resolves to an ApiResponse containing the instructor data.
+     */
+    public async instructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+        return this.instructorsGeneric("instructors", cfg);
+    }
+
+    /**
+     * Get instructors that are currently teaching a course, as listed on Testudo,
+     * based on the configuration provided.
+     * @param cfg A configuration object specifying filters and options for the
+     * request.
+     * @returns A promise that resolves to an ApiResponse containing the instructor data.
+     */
+    public async activeInstructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+        return this.instructorsGeneric("instructors/active", cfg);
     }
 }
