@@ -1,6 +1,4 @@
-import { JupiterpClientV0 } from "../../src";
-import { InstructorConfig } from "../../src/api/configs";
-import { SortBy } from "../../src/api/sort-by";
+import { JupiterpClientV0, InstructorConfig, SortBy } from "../../src";
 
 describe("instructors integration tests", () => {
     it("fetches instructors by name", async () => {
