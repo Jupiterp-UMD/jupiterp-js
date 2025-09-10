@@ -7,6 +7,10 @@ describe("SortBy", () => {
             new SortBy()
             .ascending("name")
             .descending("min_credits");
-        expect(sortBy.stringify()).toBe("sortBy=name.asc,min_credits.desc");
+        const sortStrings = sortBy.argsArray();
+        expect(sortStrings).toEqual([
+            "name.asc",
+            "min_credits.desc"
+        ]);
     });
 });

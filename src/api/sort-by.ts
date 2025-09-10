@@ -24,7 +24,11 @@ export class SortBy {
         return this;
     }
 
-    public stringify(): string {
-        return `sortBy=${this.sortKeys.join(",")}`;
+    public argsArray(): string[] {
+        return this.sortKeys;
+    }
+
+    public length(): number {
+        return this.sortKeys.length;
     }
 }

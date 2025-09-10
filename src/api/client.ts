@@ -1,3 +1,6 @@
+import { InstructorConfig, instructorConfigToQueryParams } from "./configs";
+import { InstructorResponse } from "./responses";
+
 export class JupiterpClientV0 {
     readonly dbUrl: string;
 
@@ -15,4 +18,12 @@ export class JupiterpClientV0 {
     public async health(): Promise<Response> {
         return fetch(this.dbUrl + "/v0/");
     }
+
+    // public async instructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+    //     const params = instructorConfigToQueryParams(cfg);
+    //     const url = `${this.dbUrl}/v0/instructors?${params.toString()}`;
+    //     const resp = await fetch(url);
+    //     const statusCode = resp.status;
+    //     const statusMessage = resp.statusText;
+    // }
 }

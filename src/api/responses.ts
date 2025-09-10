@@ -1,0 +1,33 @@
+import { Instructor } from "../common/instructor";
+
+export class ApiResponse<T> {
+    /**
+     * The HTTP status code of the response.
+     */
+    public statusCode: number;
+
+    /**
+     * The HTTP status message of the response.
+     */
+    public statusMessage: string;
+
+    /**
+     * The data returned by the API, or null if there was an error.
+     */
+    public data: T[] | null;
+
+    constructor(statusCode: number, statusMessage: string, data: T[] | null) {
+        this.statusCode = statusCode;
+        this.statusMessage = statusMessage;
+        this.data = data;
+    }
+
+    public ok(): boolean {
+        return this.statusCode >= 200 && this.statusCode < 300;
+    }
+}
+
+/**
+ * A response to an instructor request.
+ */
+export type InstructorResponse = ApiResponse<Instructor>;

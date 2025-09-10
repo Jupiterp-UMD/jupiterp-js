@@ -11,7 +11,15 @@ describe("CreditFilter", () => {
             .lessThanOrEqualTo(1000)
             .greaterThanOrEqualTo(1)
             .notEqualTo(1);
-        expect(creditFilter.stringify()).toBe("credits=eq.3&credits=lt.5&credits=gt.2&credits=lte.1000&credits=gte.1&credits=neq.1");
+        const filterStrings = creditFilter.argsArray();
+        expect(filterStrings).toEqual([
+            "eq.3",
+            "lt.5",
+            "gt.2",
+            "lte.1000",
+            "gte.1",
+            "neq.1"
+        ]);
     })
 })
 
@@ -25,6 +33,14 @@ describe("RatingFilter", () => {
             .lessThanOrEqualTo(1000)
             .greaterThanOrEqualTo(1)
             .notEqualTo(1);
-        expect(ratingFilter.stringify()).toBe("ratings=eq.3&ratings=lt.5&ratings=gt.2&ratings=lte.1000&ratings=gte.1&ratings=neq.1");
+        const filterStrings = ratingFilter.argsArray();
+        expect(filterStrings).toEqual([
+            "eq.3",
+            "lt.5",
+            "gt.2",
+            "lte.1000",
+            "gte.1",
+            "neq.1"
+        ]);
     })
 })

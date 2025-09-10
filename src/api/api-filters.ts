@@ -3,44 +3,44 @@
  * Currently useful for filtering courses by credits and instructors by rating. 
  */
 abstract class ApiFilter {
-    private columnName: string;
+    columnName: string;
     filtersParams: string[] = [];
 
     constructor(columnName: string) {
         this.columnName = columnName;
     }
 
-    public stringify(): string {
-        return this.filtersParams.join("&");
+    public argsArray(): string[] {
+        return this.filtersParams;
     }
 
     public equalTo(value: number): this {
-        this.filtersParams.push(`${this.columnName}=eq.${value}`);
+        this.filtersParams.push(`eq.${value}`);
         return this;
     }
 
     public lessThanOrEqualTo(value: number): this {
-        this.filtersParams.push(`${this.columnName}=lte.${value}`);
+        this.filtersParams.push(`lte.${value}`);
         return this;
     }
 
     public greaterThanOrEqualTo(value: number): this {
-        this.filtersParams.push(`${this.columnName}=gte.${value}`);
+        this.filtersParams.push(`gte.${value}`);
         return this;
     }
 
     public lessThan(value: number): this {
-        this.filtersParams.push(`${this.columnName}=lt.${value}`);
+        this.filtersParams.push(`lt.${value}`);
         return this;
     }
 
     public greaterThan(value: number): this {
-        this.filtersParams.push(`${this.columnName}=gt.${value}`);
+        this.filtersParams.push(`gt.${value}`);
         return this;
     }
 
     public notEqualTo(value: number): this {
-        this.filtersParams.push(`${this.columnName}=neq.${value}`);
+        this.filtersParams.push(`neq.${value}`);
         return this;
     }
 }
