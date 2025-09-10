@@ -1,7 +1,7 @@
-import { RatingFilter } from "../../src/api/api-filters";
-import { instructorConfigToQueryParams } from "../../src/api/configs";
+import { RatingFilter } from "../../../src/api/api-filters";
+import { instructorConfigToQueryParams } from "../../../src/api/configs";
 import { test, expect, describe } from "@jest/globals";
-import { SortBy } from "../../src/api/sort-by";
+import { SortBy } from "../../../src/api/sort-by";
 
 describe("instructorConfigToQueryParams", () => {
     test("converts valid config to query params correctly", () => {

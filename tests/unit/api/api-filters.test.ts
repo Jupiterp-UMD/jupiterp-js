@@ -1,4 +1,4 @@
-import { CreditFilter, RatingFilter } from "../../src/api/api-filters";
+import { CreditFilter, RatingFilter } from "../../../src/api/api-filters";
 import { test, expect, describe } from "@jest/globals";
 
 describe("CreditFilter", () => {

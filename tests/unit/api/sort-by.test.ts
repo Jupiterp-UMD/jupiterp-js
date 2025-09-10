@@ -1,4 +1,4 @@
-import { SortBy } from "../../src/api/sort-by";
+import { SortBy } from "../../../src/api/sort-by";
 import { test, expect, describe } from "@jest/globals";
 
 describe("SortBy", () => {

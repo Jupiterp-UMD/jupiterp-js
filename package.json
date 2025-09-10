@@ -5,6 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "test:unit": "jest -w 1 -c jest.config.mjs --selectProjects unit",
+    "test:int": "npm run build && jest -w 1 -c jest.config.mjs --selectProjects integration",
     "build": "tsc -p tsconfig.json",
     "lint": "eslint .",
     "prepublishOnly": "npm run build"

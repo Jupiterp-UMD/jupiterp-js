@@ -1,4 +1,4 @@
-import { JupiterpClientV0 } from "../../src";
+import { JupiterpClientV0 } from "../../../src";
 import { jest, test, expect, describe, beforeEach } from "@jest/globals";
 
 describe("JupiterpClientV0", () => {
