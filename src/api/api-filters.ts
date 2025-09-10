@@ -51,14 +51,12 @@ abstract class ApiFilter {
  * ```ts
  * const creditFilter = 
  *  new CreditFilter().greaterThanOrEqualTo(2).lessThanOrEqualTo(4);
- * console.log(creditFilter.stringify()); // "credits=gte.2&credits=lte.4"
  * ```
  * This does not enforce that the filters make sense to be used together. For
  * instance, it is possible to create this:
  * ```ts
  * const creditFilter = 
  *  new CreditFilter().equalTo(3).notEqualTo(3);
- * console.log(creditFilter.stringify()); // "credits=eq.3&credits=neq.3"
  * ```
  * which will never return any results.
  */
@@ -72,14 +70,12 @@ export class CreditFilter extends ApiFilter {
  * A filter for the average rating of an instructor. Can be used in an `InstructorsConfig`.
  * ```ts
  * const ratingFilter = new RatingFilter().greaterThanOrEqualTo(4.0).lessThan(5.0);
- * console.log(ratingFilter.stringify()); // "ratings=gte.4.0&ratings=lt.5.0"
  * ```
  * This does not enforce that the filters make sense to be used together. For
  * instance, it is possible to create this:
  * ```ts
  * const ratingFilter = 
  *  new RatingFilter().equalTo(3).notEqualTo(3);
- * console.log(ratingFilter.stringify()); // "credits=eq.3&credits=neq.3"
  * ```
  * which will never return any results.
  */

@@ -1,6 +1,6 @@
 import { RatingFilter } from "../../src/api/api-filters";
 import { instructorConfigToQueryParams } from "../../src/api/configs";
-import { jest, test, expect, describe, beforeEach, afterEach } from "@jest/globals";
+import { test, expect, describe } from "@jest/globals";
 import { SortBy } from "../../src/api/sort-by";
 
 describe("instructorConfigToQueryParams", () => {

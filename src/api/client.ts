@@ -1,5 +1,6 @@
+import { Instructor } from "../common/instructor";
 import { InstructorConfig, instructorConfigToQueryParams } from "./configs";
-import { InstructorResponse } from "./responses";
+import { ApiResponse, InstructorResponse } from "./responses";
 
 export class JupiterpClientV0 {
     readonly dbUrl: string;
@@ -19,11 +20,17 @@ export class JupiterpClientV0 {
         return fetch(this.dbUrl + "/v0/");
     }
 
-    // public async instructors(cfg: InstructorConfig): Promise<InstructorResponse> {
-    //     const params = instructorConfigToQueryParams(cfg);
-    //     const url = `${this.dbUrl}/v0/instructors?${params.toString()}`;
-    //     const resp = await fetch(url);
-    //     const statusCode = resp.status;
-    //     const statusMessage = resp.statusText;
-    // }
+    public async instructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+        const params = instructorConfigToQueryParams(cfg);
+        const url = `${this.dbUrl}/v0/instructors?${params.toString()}`;
+        const resp = await fetch(url);
+        const statusCode = resp.status;
+        const statusMessage = resp.statusText;
+        if (!resp.ok) {
+            return new ApiResponse<Instructor>(statusCode, statusMessage, null);
+        }
+
+        const data = (await resp.json()) as Instructor[];
+        return new ApiResponse<Instructor>(statusCode, statusMessage, data);
+    }
 }
