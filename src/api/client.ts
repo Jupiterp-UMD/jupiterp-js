@@ -1,7 +1,8 @@
+import { CourseBasic, CourseBasicRaw, parseRawCourseBasic } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { parseRawSection, Section, SectionRaw } from "../common/section";
-import { InstructorConfig, instructorConfigToQueryParams, sectionConfigToQueryParams, SectionsConfig } from "./configs";
-import { ApiResponse, InstructorResponse, SectionsResponse } from "./responses";
+import { courseConfigToQueryParams, CoursesConfig, InstructorConfig, instructorConfigToQueryParams, sectionConfigToQueryParams, SectionsConfig } from "./configs";
+import { ApiResponse, CoursesBasicResponse, InstructorResponse, SectionsResponse } from "./responses";
 
 export class JupiterpClientV0 {
     readonly dbUrl: string;
@@ -17,10 +18,44 @@ export class JupiterpClientV0 {
         return new JupiterpClientV0("https://api.jupiterp.com");
     }
 
+    /**
+     * Get a health check response from the API.
+     * @returns A promise that resolves to a simple text message if the API
+     * is reachable.
+     */
     public async health(): Promise<Response> {
         return fetch(this.dbUrl + "/v0/");
     }
 
+    /**
+     * Get a list of courses based on the provided configuration. These are
+     * basic course objects without sections information. For courses with
+     * sections, use `coursesWithSections`.
+     * @param cfg A configuration object specifying filters and options for the
+     * request.
+     * @returns A promise that resolves to an ApiResponse containing the course data.
+     */
+    public async courses(cfg: CoursesConfig): Promise<CoursesBasicResponse> {
+        const params = courseConfigToQueryParams(cfg);
+        const url = `${this.dbUrl}/v0/courses?${params.toString()}`;
+        const res = await fetch(url);
+        const statusCode = res.status;
+        const statusMessage = res.statusText;
+        if (!res.ok) {
+            return new ApiResponse<CourseBasic>(statusCode, statusMessage, null);
+        }
+
+        const data = (await res.json()) as CourseBasicRaw[];
+        const courses = data.map(parseRawCourseBasic);
+        return new ApiResponse<CourseBasic>(statusCode, statusMessage, courses);
+    }
+
+    /**
+     * Get a list of sections based on the provided configuration.
+     * @param cfg A configuration object specifying filters and options for the
+     * request.
+     * @returns A promise that resolves to an ApiResponse containing the section data.
+     */
     public async sections(cfg: SectionsConfig): Promise<SectionsResponse> {
         const params = sectionConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/sections?${params.toString()}`;

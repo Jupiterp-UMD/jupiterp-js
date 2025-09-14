@@ -1,3 +1,4 @@
+import { CourseBasic } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { Section } from "../common/section";
 
@@ -27,6 +28,11 @@ export class ApiResponse<T> {
         return this.statusCode >= 200 && this.statusCode < 300;
     }
 }
+
+/**
+ * A response to a basic courses request (no sections information).
+ */
+export type CoursesBasicResponse = ApiResponse<CourseBasic>;
 
 /**
  * A response to a sections request.

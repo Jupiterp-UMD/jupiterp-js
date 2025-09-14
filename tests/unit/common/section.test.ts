@@ -1,5 +1,5 @@
 import {
-    SectionRaw, Section, ClassMeeting, Classtime, Location, parseRawSection
+    SectionRaw, Section, parseRawSection
 } from "../../../src/common/section";
 
 describe("section data conversion", () => {

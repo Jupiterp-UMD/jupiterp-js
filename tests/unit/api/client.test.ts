@@ -1,7 +1,8 @@
-import { JupiterpClientV0 } from "../../../src";
+import { GenEd, JupiterpClientV0 } from "../../../src";
 import { jest, test, expect, describe, beforeEach } from "@jest/globals";
 import { Section, SectionRaw } from "../../../src/common/section";
-import { SectionsConfig } from "../../../src/api/configs";
+import { CoursesConfig, SectionsConfig } from "../../../src/api/configs";
+import { CourseBasicRaw } from "../../../src/common/course";
 
 describe("JupiterpClientV0", () => {
   let originalFetch: typeof fetch;
@@ -168,5 +169,34 @@ describe("JupiterpClientV0", () => {
     expect(resp.statusCode).toBe(200);
     expect(resp.statusMessage).toBe("OK");
     expect(resp.data).toEqual(expectedParsedSections);
-  })
+  });
+
+  test("fetches basic courses", async () => {
+    const args: CoursesConfig = {
+      courseCodes: new Set(["CMSC131", "MATH140"]),
+      creditFilters: null,
+      genEds: null,
+      prefix: null,
+      limit: 10,
+      offset: 0,
+      sortBy: null,
+    };
+    const mockCourses: CourseBasicRaw[] = [
+      { course_code: "CMSC131", name: "Object-Oriented Programming I", min_credits: 3, max_credits: null, description: "Introduction to object-oriented programming.", gen_eds: null, conditions: ["Prerequisite: MATH140"]},
+      { course_code: "MATH140", name: "Calculust I", min_credits: 4, max_credits: null, description: "Differential and integral calculus of one variable.", gen_eds: ["FSMA"], conditions: null},
+    ];
+    const mockResponse = new Response(JSON.stringify(mockCourses), { status: 200, statusText: "OK" });
+    fetchMock.mockResolvedValueOnce(mockResponse);
+
+    const client = new JupiterpClientV0("https://custom-url.com");
+    const resp = await client.courses(args);
+
+    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/courses?courseCodes=CMSC131%2CMATH140&limit=10&offset=0");
+    expect(resp.statusCode).toBe(200);
+    expect(resp.statusMessage).toBe("OK");
+    expect(resp.data).toEqual([
+      { courseCode: "CMSC131", name: "Object-Oriented Programming I", minCredits: 3, maxCredits: null, description: "Introduction to object-oriented programming.", genEds: null, conditions: ["Prerequisite: MATH140"]},
+      { courseCode: "MATH140", name: "Calculust I", minCredits: 4, maxCredits: null, description: "Differential and integral calculus of one variable.", genEds: [GenEd.FSMA], conditions: null},
+    ]);
+  });
 });

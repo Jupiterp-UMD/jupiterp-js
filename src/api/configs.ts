@@ -47,6 +47,34 @@ export interface CoursesConfig {
     sortBy: SortBy | null;
 }
 
+export function courseConfigToQueryParams(cfg: CoursesConfig): URLSearchParams {
+    const params = new URLSearchParams();
+    if (cfg.courseCodes && cfg.courseCodes.size > 0) {
+        params.append("courseCodes", Array.from(cfg.courseCodes).join(","));
+    }
+    if (cfg.prefix) {
+        params.append("prefix", cfg.prefix);
+    }
+    if (cfg.genEds && cfg.genEds.size > 0) {
+        params.append("genEds", Array.from(cfg.genEds).join(","));
+    }
+    if (cfg.limit !== null && cfg.limit !== undefined) {
+        params.append("limit", cfg.limit.toString());
+    }
+    if (cfg.offset !== null && cfg.offset !== undefined) {
+        params.append("offset", cfg.offset.toString());
+    }
+    if (cfg.creditFilters) {
+        for (const arg of cfg.creditFilters.argsArray()) {
+            params.append("creditFilters", arg);
+        }
+    }
+    if (cfg.sortBy && cfg.sortBy.length() > 0) {
+        params.append("sortBy", cfg.sortBy.argsArray().join(","));
+    }
+    return params;
+}
+
 /**
  * Configuration for a request to sections endpoints.
  */

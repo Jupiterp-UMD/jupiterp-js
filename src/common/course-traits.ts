@@ -40,4 +40,23 @@ export class GenEd {
     public static DVUP = new GenEd("DVUP", "Understanding Plural Societies")
 
     public static SCIS = new GenEd("SCIS", "Signature Courses - Big Question")
+
+    public static fromCode(code: string): GenEd {
+        switch (code) {
+            case "FSAW": return GenEd.FSAW;
+            case "FSAR": return GenEd.FSAR;
+            case "FSMA": return GenEd.FSMA;
+            case "FSOC": return GenEd.FSOC;
+            case "FSPW": return GenEd.FSPW;
+            case "DSHS": return GenEd.DSHS;
+            case "DSHU": return GenEd.DSHU;
+            case "DSNS": return GenEd.DSNS;
+            case "DSNL": return GenEd.DSNL;
+            case "DSSP": return GenEd.DSSP;
+            case "DVCC": return GenEd.DVCC;
+            case "DVUP": return GenEd.DVUP;
+            case "SCIS": return GenEd.SCIS;
+            default: throw new Error(`Unknown GenEd code: ${code}`);
+        }
+    }
 }
