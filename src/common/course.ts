@@ -67,3 +67,30 @@ export function parseRawCourseBasic(raw: CourseBasicRaw): CourseBasic {
         description: raw.description,
     }
 }
+
+/**
+ * A minified course object with only the course code and name.
+ */
+export interface CourseMinifiedRaw {
+    course_code: string;
+    name: string;
+}
+
+export interface CourseMinified {
+    /**
+     * The course code, e.g. "CMSC131".
+     */
+    courseCode: string;
+
+    /**
+     * The name of the course, e.g. "Object-Oriented Programming I".
+     */
+    name: string;
+}
+
+export function parseRawCourseMinified(raw: CourseMinifiedRaw): CourseMinified {
+    return {
+        courseCode: raw.course_code,
+        name: raw.name,
+    }
+}

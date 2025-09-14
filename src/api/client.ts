@@ -1,8 +1,8 @@
-import { CourseBasic, CourseBasicRaw, parseRawCourseBasic } from "../common/course";
+import { CourseBasic, CourseBasicRaw, CourseMinified, CourseMinifiedRaw, parseRawCourseBasic, parseRawCourseMinified } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { parseRawSection, Section, SectionRaw } from "../common/section";
 import { courseConfigToQueryParams, CoursesConfig, InstructorConfig, instructorConfigToQueryParams, sectionConfigToQueryParams, SectionsConfig } from "./configs";
-import { ApiResponse, CoursesBasicResponse, InstructorResponse, SectionsResponse } from "./responses";
+import { ApiResponse, CourseMinifiedResponse, CoursesBasicResponse, InstructorResponse, SectionsResponse } from "./responses";
 
 export class JupiterpClientV0 {
     readonly dbUrl: string;
@@ -48,6 +48,23 @@ export class JupiterpClientV0 {
         const data = (await res.json()) as CourseBasicRaw[];
         const courses = data.map(parseRawCourseBasic);
         return new ApiResponse<CourseBasic>(statusCode, statusMessage, courses);
+    }
+
+    /**
+     * Get a list of minified courses.
+     */
+    public async minifiedCourses(cfg: CoursesConfig): Promise<CourseMinifiedResponse> {
+        const params = courseConfigToQueryParams(cfg);
+        const url = `${this.dbUrl}/v0/courses/minified?${params.toString()}`;
+        const res = await fetch(url);
+        const statusCode = res.status;
+        const statusMessage = res.statusText;
+        if (!res.ok) {
+            return new ApiResponse<CourseMinified>(statusCode, statusMessage, null);
+        }
+
+        const data = (await res.json()) as CourseMinifiedRaw[];
+        return new ApiResponse<CourseMinified>(statusCode, statusMessage, data.map(parseRawCourseMinified));
     }
 
     /**

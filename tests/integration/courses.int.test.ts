@@ -6,6 +6,7 @@ import {
     SortBy,
     GenEd
 } from "../../src";
+import { CourseMinifiedResponse } from "../../src/api/responses";
 
 describe("courses endpoints integration tests", () => {
     it("fetches basic course info by course codes", async () => {
@@ -45,4 +46,28 @@ describe("courses endpoints integration tests", () => {
             expect(resp.data[1].conditions).toStrictEqual(["Prerequisite: Minimum grade of C- in MATH115."]);
         }
     });
-})
+
+    it("fetches minified course info by course codes", async () => {
+        const client = JupiterpClientV0.createDefault();
+        const cfg: CoursesConfig = {
+            courseCodes: new Set(["CMSC131", "MATH140"]),
+            creditFilters: null,
+            genEds: null,
+            prefix: null,
+            limit: 10,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code"),
+        };
+
+        const resp: CourseMinifiedResponse = await client.minifiedCourses(cfg);
+
+        expect(resp.statusCode).toBe(200);
+        expect(resp.data).not.toBeNull();
+        if (resp.data) {
+            expect(resp.data).toStrictEqual([
+                { courseCode: "CMSC131", name: "Object-Oriented Programming I" },
+                { courseCode: "MATH140", name: "Calculus I" },
+            ]);
+        }
+    });
+});
