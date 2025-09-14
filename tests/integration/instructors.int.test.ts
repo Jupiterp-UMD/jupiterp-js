@@ -63,6 +63,7 @@ describe("instructors integration tests", () => {
             expect(resp.data.length).toBe(1);
             expect(resp.data[0].name).toBe("Daniel Abadi");
             expect(resp.data[0].slug).toBe("abadi_daniel");
+            expect(resp.data[0].average_rating).toBe(3.122);
         }
     });
 });

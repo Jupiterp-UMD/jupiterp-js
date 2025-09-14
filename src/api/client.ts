@@ -20,6 +20,10 @@ export class JupiterpClientV0 {
         return fetch(this.dbUrl + "/v0/");
     }
 
+    // public async sections(): Promise<SectionsResponse> {
+        
+    // }
+
     async instructorsGeneric(path: string, cfg: InstructorConfig): Promise<InstructorResponse> {
         const params = instructorConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/${path}?${params.toString()}`;

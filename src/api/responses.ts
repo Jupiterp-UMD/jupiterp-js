@@ -1,4 +1,5 @@
 import { Instructor } from "../common/instructor";
+import { Section } from "../common/section";
 
 export class ApiResponse<T> {
     /**
@@ -26,6 +27,11 @@ export class ApiResponse<T> {
         return this.statusCode >= 200 && this.statusCode < 300;
     }
 }
+
+/**
+ * A response to a sections request.
+ */
+export type SectionsResponse = ApiResponse<Section>;
 
 /**
  * A response to an instructor request.
