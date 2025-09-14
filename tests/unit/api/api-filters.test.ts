@@ -11,7 +11,9 @@ describe("CreditFilter", () => {
             .lessThanOrEqualTo(1000)
             .greaterThanOrEqualTo(1)
             .notEqualTo(1);
+
         const filterStrings = creditFilter.argsArray();
+
         expect(filterStrings).toEqual([
             "eq.3",
             "lt.5",
@@ -33,7 +35,9 @@ describe("RatingFilter", () => {
             .lessThanOrEqualTo(1000)
             .greaterThanOrEqualTo(1)
             .notEqualTo(1);
+            
         const filterStrings = ratingFilter.argsArray();
+
         expect(filterStrings).toEqual([
             "eq.3",
             "lt.5",

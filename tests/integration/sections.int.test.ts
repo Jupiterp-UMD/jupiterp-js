@@ -12,6 +12,7 @@ describe("sections integration tests", () => {
         };
 
         const resp: SectionsResponse = await client.sections(cfg);
+        
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
         if (resp.data) {

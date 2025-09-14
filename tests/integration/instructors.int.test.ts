@@ -11,7 +11,9 @@ describe("instructors integration tests", () => {
             offset: 0,
             sortBy: new SortBy().ascending("name"),
         };
+
         const resp = await client.instructors(cfg);
+
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
         if (resp.data) {
@@ -33,7 +35,9 @@ describe("instructors integration tests", () => {
             offset: 0,
             sortBy: new SortBy().ascending("name"),
         };
+
         const resp = await client.instructors(cfg);
+
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
         if (resp.data) {
@@ -56,7 +60,9 @@ describe("instructors integration tests", () => {
             offset: 0,
             sortBy: new SortBy().ascending("name"),
         };
+
         const resp = await client.activeInstructors(cfg);
+        
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
         if (resp.data) {
