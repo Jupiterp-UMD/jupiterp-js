@@ -1,6 +1,7 @@
 import { Instructor } from "../common/instructor";
+import { parseRawSection, Section, SectionRaw } from "../common/section";
 import { InstructorConfig, instructorConfigToQueryParams } from "./configs";
-import { ApiResponse, InstructorResponse } from "./responses";
+import { ApiResponse, InstructorResponse, SectionsResponse } from "./responses";
 
 export class JupiterpClientV0 {
     readonly dbUrl: string;
@@ -20,9 +21,18 @@ export class JupiterpClientV0 {
         return fetch(this.dbUrl + "/v0/");
     }
 
-    // public async sections(): Promise<SectionsResponse> {
-        
-    // }
+    public async sections(): Promise<SectionsResponse> {
+        const res = await fetch(this.dbUrl + "/v0/sections");
+        const statusCode = res.status;
+        const statusMessage = res.statusText;
+        if (!res.ok) {
+            return new ApiResponse<Section>(statusCode, statusMessage, null);
+        }
+
+        const data = (await res.json()) as SectionRaw[];
+        const sections = data.map(parseRawSection);
+        return new ApiResponse<Section>(statusCode, statusMessage, sections);
+    }
 
     async instructorsGeneric(path: string, cfg: InstructorConfig): Promise<InstructorResponse> {
         const params = instructorConfigToQueryParams(cfg);
