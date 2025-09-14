@@ -5,7 +5,7 @@ import { SortBy } from "./sort-by";
 /**
  * Configuration for a request to any of the courses endpoints.
  */
-export interface CourseConfig {
+export interface CoursesConfig {
     /**
      * A set of course codes to get results for. Course codes are the
      * department code followed by the course number, e.g. "CMSC131".
@@ -45,6 +45,60 @@ export interface CourseConfig {
      * Columns to sort by when returning.
      */
     sortBy: SortBy | null;
+}
+
+/**
+ * Configuration for a request to sections endpoints.
+ */
+export interface SectionsConfig {
+    /**
+     * A set of course codes to get results for. Cannot set both
+     * courseCodes and prefix.
+     */
+    courseCodes: Set<string> | null;
+
+    /**
+     * A prefix to filter course codes by. For instance, setting this to "CMSC"
+     * will return all sections with a course code starting with "CMSC".
+     * Cannot set both courseCodes and prefix.
+     */
+    prefix: string | null;
+
+    /**
+     * Maximum number of section records to return; defaults to 100, 
+     * maximum of 500.
+     */
+    limit: number | null;
+
+    /**
+     * How many records to skip when returning results; defaults to 0
+     */
+    offset: number | null;
+
+    /**
+     * Columns to sort by when returning.
+     */
+    sortBy: SortBy | null;
+}
+
+export function sectionConfigToQueryParams(cfg: SectionsConfig): URLSearchParams {
+    const params = new URLSearchParams();
+    if (cfg.courseCodes && cfg.courseCodes.size > 0) {
+        params.append("courseCodes", Array.from(cfg.courseCodes).join(","));
+    }
+    if (cfg.prefix) {
+        params.append("prefix", cfg.prefix);
+    }
+    if (cfg.limit !== null && cfg.limit !== undefined) {
+        params.append("limit", cfg.limit.toString());
+    }
+    if (cfg.offset !== null && cfg.offset !== undefined) {
+        params.append("offset", cfg.offset.toString());
+    }
+    if (cfg.sortBy && cfg.sortBy.length() > 0) {
+        params.append("sortBy", cfg.sortBy.argsArray().join(","));
+    }
+    return params;
 }
 
 /**

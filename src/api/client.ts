@@ -1,6 +1,6 @@
 import { Instructor } from "../common/instructor";
 import { parseRawSection, Section, SectionRaw } from "../common/section";
-import { InstructorConfig, instructorConfigToQueryParams } from "./configs";
+import { InstructorConfig, instructorConfigToQueryParams, sectionConfigToQueryParams, SectionsConfig } from "./configs";
 import { ApiResponse, InstructorResponse, SectionsResponse } from "./responses";
 
 export class JupiterpClientV0 {
@@ -21,8 +21,10 @@ export class JupiterpClientV0 {
         return fetch(this.dbUrl + "/v0/");
     }
 
-    public async sections(): Promise<SectionsResponse> {
-        const res = await fetch(this.dbUrl + "/v0/sections");
+    public async sections(cfg: SectionsConfig): Promise<SectionsResponse> {
+        const params = sectionConfigToQueryParams(cfg);
+        const url = `${this.dbUrl}/v0/sections?${params.toString()}`;
+        const res = await fetch(url);
         const statusCode = res.status;
         const statusMessage = res.statusText;
         if (!res.ok) {

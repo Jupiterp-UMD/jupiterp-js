@@ -1,6 +1,7 @@
 import { JupiterpClientV0 } from "../../../src";
 import { jest, test, expect, describe, beforeEach } from "@jest/globals";
 import { Section, SectionRaw } from "../../../src/common/section";
+import { SectionsConfig } from "../../../src/api/configs";
 
 describe("JupiterpClientV0", () => {
   let originalFetch: typeof fetch;
@@ -116,19 +117,33 @@ describe("JupiterpClientV0", () => {
   });
 
   test("failed sections fetch has correct response", async () => {
+    const args: SectionsConfig = {
+      courseCodes: null,
+      prefix: null,
+      limit: null,
+      offset: null,
+      sortBy: null,
+    }
     const mockResponse = new Response(null, { status: 404, statusText: "Not Found" });
     fetchMock.mockResolvedValueOnce(mockResponse);
 
     const client = new JupiterpClientV0("https://custom-url.com");
-    const resp = await client.sections();
+    const resp = await client.sections(args);
 
-    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/sections");
+    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/sections?");
     expect(resp.statusCode).toBe(404);
     expect(resp.statusMessage).toBe("Not Found");
     expect(resp.data).toBeNull();
   });
 
   test("successfully fetches sections", async () => {
+    const args: SectionsConfig = {
+      courseCodes: null,
+      prefix: null,
+      limit: null,
+      offset: null,
+      sortBy: null,
+    }
     const mockSections: SectionRaw[] = [
       { course_code: "CMSC131", sec_code: "0101", instructors: ["John Doe"], meetings: ["OnlineAsync"], open_seats: 5, total_seats: 30, waitlist: 0, holdfile: null },
       { course_code: "MATH140", sec_code: "0201", instructors: ["Jane Smith"], meetings: ["TBA"], open_seats: 0, total_seats: 25, waitlist: 10, holdfile: 2 },
@@ -142,14 +157,14 @@ describe("JupiterpClientV0", () => {
       { courseCode: "BMGT298M", sectionCode: "0101", instructors: ["Testudo Testudo"], meetings: ["Unknown"], openSeats: 0, totalSeats: 0, waitlist: 0, holdfile: null },
       { courseCode: "ENEE150", sectionCode: "0301", instructors: ["Alice Johnson"], meetings: [{ classtime: { days: "MWF", start: 10.0, end: 11.0 }, location: { building: "ENGR", room: "2100" } }], openSeats: 3, totalSeats: 40, waitlist: 5, holdfile: 1 },
       { courseCode: "ASTR320", sectionCode: "F010", instructors: ["Albuquerque Joe", "Jennifer Tallahassee"], meetings: [{ classtime: { days: "MWF", start: 10.0, end: 10.75 }, location: { building: "ESJ", room: "0101" } }, { classtime: { days: "T", start: 14.0, end: 16.0 }, location: { building: "OnlineSync", room: "" } }], openSeats: 2, totalSeats: 20, waitlist: 0, holdfile: null },
-    ]
+    ];
     const mockResponse = new Response(JSON.stringify(mockSections), { status: 200, statusText: "OK" });
     fetchMock.mockResolvedValueOnce(mockResponse);
 
     const client = new JupiterpClientV0("https://custom-url.com");
-    const resp = await client.sections();
+    const resp = await client.sections(args);
 
-    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/sections");
+    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/sections?");
     expect(resp.statusCode).toBe(200);
     expect(resp.statusMessage).toBe("OK");
     expect(resp.data).toEqual(expectedParsedSections);
