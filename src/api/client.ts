@@ -1,8 +1,8 @@
-import { CourseBasic, CourseBasicRaw, CourseMinified, CourseMinifiedRaw, parseRawCourseBasic, parseRawCourseMinified } from "../common/course";
+import { Course, CourseBasic, CourseBasicRaw, CourseMinified, CourseMinifiedRaw, CourseRaw, parseRawCourse, parseRawCourseBasic, parseRawCourseMinified } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { parseRawSection, Section, SectionRaw } from "../common/section";
 import { courseConfigToQueryParams, CoursesConfig, InstructorConfig, instructorConfigToQueryParams, sectionConfigToQueryParams, SectionsConfig } from "./configs";
-import { ApiResponse, CourseMinifiedResponse, CoursesBasicResponse, InstructorResponse, SectionsResponse } from "./responses";
+import { ApiResponse, CourseMinifiedResponse, CourseResponse, CoursesBasicResponse, InstructorResponse, SectionsResponse } from "./responses";
 
 export class JupiterpClientV0 {
     readonly dbUrl: string;
@@ -65,6 +65,29 @@ export class JupiterpClientV0 {
 
         const data = (await res.json()) as CourseMinifiedRaw[];
         return new ApiResponse<CourseMinified>(statusCode, statusMessage, data.map(parseRawCourseMinified));
+    }
+
+    /**
+     * Get a list of courses along with their sections based on the provided
+     * configuration.
+     * @param cfg A configuration object specifying filters and options for the
+     * request.
+     * @returns A promise that resolves to an ApiResponse containing the course
+     * and section data.
+     */
+    public async coursesWithSections(cfg: CoursesConfig): Promise<CourseResponse> {
+        const params = courseConfigToQueryParams(cfg);
+        const url = `${this.dbUrl}/v0/courses/withSections?${params.toString()}`;
+        const res = await fetch(url);
+        const statusCode = res.status;
+        const statusMessage = res.statusText;
+        if (!res.ok) {
+            return new ApiResponse<Course>(statusCode, statusMessage, null);
+        }
+
+        const data = (await res.json()) as CourseRaw[];
+        const courses = data.map(parseRawCourse);
+        return new ApiResponse<Course>(statusCode, statusMessage, courses);
     }
 
     /**

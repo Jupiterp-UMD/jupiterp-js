@@ -1,4 +1,4 @@
-import { CourseBasic, CourseMinified } from "../common/course";
+import { Course, CourseBasic, CourseMinified } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { Section } from "../common/section";
 
@@ -38,6 +38,11 @@ export type CoursesBasicResponse = ApiResponse<CourseBasic>;
  * A response to a minified courses request.
  */
 export type CourseMinifiedResponse = ApiResponse<CourseMinified>;
+
+/**
+ * A response to a full courses request (with sections information).
+ */
+export type CourseResponse = ApiResponse<Course>;
 
 /**
  * A response to a sections request.

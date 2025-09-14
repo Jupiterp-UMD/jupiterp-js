@@ -70,4 +70,42 @@ describe("courses endpoints integration tests", () => {
             ]);
         }
     });
+
+    it("fetches full course info with sections by course codes", async () => {
+        const client = JupiterpClientV0.createDefault();
+        const cfg: CoursesConfig = {
+            courseCodes: new Set(["CMSC433"]),
+            creditFilters: null,
+            genEds: null,
+            prefix: null,
+            limit: 10,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code"),
+        };
+
+        const resp = await client.coursesWithSections(cfg);
+
+        expect(resp.statusCode).toBe(200);
+        expect(resp.data).not.toBeNull();
+        if (resp.data) {
+            expect(resp.data.length).toBe(1);
+            expect(resp.data[0].courseCode).toBe("CMSC433");
+            expect(resp.data[0].name).toBe("Programming Language Technologies and Paradigms");
+            expect(resp.data[0].minCredits).toBe(3);
+            expect(resp.data[0].maxCredits).toBeNull();
+            expect(resp.data[0].description).toBe("Programming language technologies (e.g., object-oriented programming), their implementations and use in software design and implementation.");
+            expect(resp.data[0].genEds).toBeNull();
+            expect(resp.data[0].conditions).toEqual([
+                "Prerequisite: Minimum grade of C- in CMSC330; or must be in the (Computer Science (Doctoral), Computer Science (Master's)) program. ",
+                "Restriction: Permission of CMNS-Computer Science department."
+            ]);
+            expect(resp.data[0].sections).not.toBeNull();
+            if (resp.data[0].sections) {
+                expect(resp.data[0].sections.length).toBe(2);
+                const section = resp.data[0].sections[0];
+                expect(section.sectionCode).toBe("0101");
+                expect(section.courseCode).toBe("CMSC433");
+            }
+        }
+    });
 });
