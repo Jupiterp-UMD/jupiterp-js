@@ -11,7 +11,9 @@ export {
     ApiResponse, 
     InstructorResponse, 
     SectionsResponse, 
-    CoursesBasicResponse 
+    CoursesBasicResponse,
+    CourseMinifiedResponse,
+    CourseResponse
 } from "./api/responses";
 export { SortBy } from "./api/sort-by";
 export { CreditFilter, RatingFilter } from "./api/api-filters";

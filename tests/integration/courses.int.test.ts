@@ -1,12 +1,12 @@
 import {
     JupiterpClientV0, 
-    CourseBasic, 
     CoursesBasicResponse, 
     CoursesConfig, 
     SortBy,
-    GenEd
+    GenEd,
+    CourseResponse,
+    CourseMinifiedResponse
 } from "../../src";
-import { CourseMinifiedResponse } from "../../src/api/responses";
 
 describe("courses endpoints integration tests", () => {
     it("fetches basic course info by course codes", async () => {
@@ -83,7 +83,7 @@ describe("courses endpoints integration tests", () => {
             sortBy: new SortBy().ascending("course_code"),
         };
 
-        const resp = await client.coursesWithSections(cfg);
+        const resp: CourseResponse = await client.coursesWithSections(cfg);
 
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();

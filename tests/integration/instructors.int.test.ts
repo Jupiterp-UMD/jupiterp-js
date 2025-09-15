@@ -1,4 +1,4 @@
-import { JupiterpClientV0, InstructorConfig, SortBy } from "../../src";
+import { JupiterpClientV0, InstructorConfig, SortBy, InstructorResponse } from "../../src";
 
 describe("instructors integration tests", () => {
     it("fetches instructors by name", async () => {
@@ -12,7 +12,7 @@ describe("instructors integration tests", () => {
             sortBy: new SortBy().ascending("name"),
         };
 
-        const resp = await client.instructors(cfg);
+        const resp: InstructorResponse = await client.instructors(cfg);
 
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
