@@ -47,7 +47,7 @@ export interface CoursesConfig {
     sortBy: SortBy | null;
 }
 
-export function courseConfigToQueryParams(cfg: CoursesConfig): URLSearchParams {
+export function coursesConfigToQueryParams(cfg: CoursesConfig): URLSearchParams {
     const params = new URLSearchParams();
     if (cfg.courseCodes && cfg.courseCodes.size > 0) {
         params.append("courseCodes", Array.from(cfg.courseCodes).join(","));
@@ -109,7 +109,7 @@ export interface SectionsConfig {
     sortBy: SortBy | null;
 }
 
-export function sectionConfigToQueryParams(cfg: SectionsConfig): URLSearchParams {
+export function sectionsConfigToQueryParams(cfg: SectionsConfig): URLSearchParams {
     const params = new URLSearchParams();
     if (cfg.courseCodes && cfg.courseCodes.size > 0) {
         params.append("courseCodes", Array.from(cfg.courseCodes).join(","));
@@ -132,7 +132,7 @@ export function sectionConfigToQueryParams(cfg: SectionsConfig): URLSearchParams
 /**
  * Configuration for a request to instructors endpoints.
  */
-export interface InstructorConfig {
+export interface InstructorsConfig {
     /**
      * A set of instructor names to get results for. Cannot set both
      * instructorNames and instructorSlugs.
@@ -169,7 +169,7 @@ export interface InstructorConfig {
     sortBy: SortBy | null;
 }
 
-export function instructorConfigToQueryParams(cfg: InstructorConfig): URLSearchParams {
+export function instructorsConfigToQueryParams(cfg: InstructorsConfig): URLSearchParams {
     const params = new URLSearchParams();
     if (cfg.instructorNames && cfg.instructorNames.size > 0) {
         params.append("instructorNames", Array.from(cfg.instructorNames).join(","));

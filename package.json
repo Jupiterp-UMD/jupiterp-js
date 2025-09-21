@@ -1,8 +1,12 @@
 {
   "name": "@jupiterp/jupiterp",
   "version": "0.1.0",
-  "description": "",
+  "description": "A TypeScript library for working with UMD course data from the Jupiterp API.",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "test": "jest",
     "test:unit": "jest -w 1 -c jest.config.mjs --selectProjects unit",

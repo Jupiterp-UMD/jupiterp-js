@@ -4,8 +4,8 @@ import {
     CoursesConfig, 
     SortBy,
     GenEd,
-    CourseResponse,
-    CourseMinifiedResponse
+    CoursesResponse,
+    CoursesMinifiedResponse
 } from "../../src";
 
 describe("courses endpoints integration tests", () => {
@@ -59,7 +59,7 @@ describe("courses endpoints integration tests", () => {
             sortBy: new SortBy().ascending("course_code"),
         };
 
-        const resp: CourseMinifiedResponse = await client.minifiedCourses(cfg);
+        const resp: CoursesMinifiedResponse = await client.minifiedCourses(cfg);
 
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
@@ -83,7 +83,7 @@ describe("courses endpoints integration tests", () => {
             sortBy: new SortBy().ascending("course_code"),
         };
 
-        const resp: CourseResponse = await client.coursesWithSections(cfg);
+        const resp: CoursesResponse = await client.coursesWithSections(cfg);
 
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();

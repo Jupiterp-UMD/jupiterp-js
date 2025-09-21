@@ -1,9 +1,12 @@
 import { Course, CourseBasic, CourseBasicRaw, CourseMinified, CourseMinifiedRaw, CourseRaw, parseRawCourse, parseRawCourseBasic, parseRawCourseMinified } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { parseRawSection, Section, SectionRaw } from "../common/section";
-import { courseConfigToQueryParams, CoursesConfig, InstructorConfig, instructorConfigToQueryParams, sectionConfigToQueryParams, SectionsConfig } from "./configs";
-import { ApiResponse, CourseMinifiedResponse, CourseResponse, CoursesBasicResponse, InstructorResponse, SectionsResponse } from "./responses";
+import { coursesConfigToQueryParams, CoursesConfig, InstructorsConfig, instructorsConfigToQueryParams, sectionsConfigToQueryParams, SectionsConfig } from "./configs";
+import { ApiResponse, CoursesMinifiedResponse, CoursesResponse, CoursesBasicResponse, InstructorsResponse, SectionsResponse } from "./responses";
 
+/**
+ * A client for interacting with the Jupiterp API v0.
+ */
 export class JupiterpClientV0 {
     readonly dbUrl: string;
 
@@ -14,6 +17,10 @@ export class JupiterpClientV0 {
         this.dbUrl = dbUrl;
     }
 
+    /**
+     * Creates a default client that connects to the official Jupiterp API.
+     * @returns A new instance of JupiterpClientV0.
+     */
     public static createDefault(): JupiterpClientV0 {
         return new JupiterpClientV0("https://api.jupiterp.com");
     }
@@ -36,7 +43,7 @@ export class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the course data.
      */
     public async courses(cfg: CoursesConfig): Promise<CoursesBasicResponse> {
-        const params = courseConfigToQueryParams(cfg);
+        const params = coursesConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/courses?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
@@ -53,8 +60,8 @@ export class JupiterpClientV0 {
     /**
      * Get a list of minified courses.
      */
-    public async minifiedCourses(cfg: CoursesConfig): Promise<CourseMinifiedResponse> {
-        const params = courseConfigToQueryParams(cfg);
+    public async minifiedCourses(cfg: CoursesConfig): Promise<CoursesMinifiedResponse> {
+        const params = coursesConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/courses/minified?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
@@ -75,8 +82,8 @@ export class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the course
      * and section data.
      */
-    public async coursesWithSections(cfg: CoursesConfig): Promise<CourseResponse> {
-        const params = courseConfigToQueryParams(cfg);
+    public async coursesWithSections(cfg: CoursesConfig): Promise<CoursesResponse> {
+        const params = coursesConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/courses/withSections?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
@@ -97,7 +104,7 @@ export class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the section data.
      */
     public async sections(cfg: SectionsConfig): Promise<SectionsResponse> {
-        const params = sectionConfigToQueryParams(cfg);
+        const params = sectionsConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/sections?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
@@ -111,8 +118,8 @@ export class JupiterpClientV0 {
         return new ApiResponse<Section>(statusCode, statusMessage, sections);
     }
 
-    async instructorsGeneric(path: string, cfg: InstructorConfig): Promise<InstructorResponse> {
-        const params = instructorConfigToQueryParams(cfg);
+    async instructorsGeneric(path: string, cfg: InstructorsConfig): Promise<InstructorsResponse> {
+        const params = instructorsConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/${path}?${params.toString()}`;
         const resp = await fetch(url);
         const statusCode = resp.status;
@@ -132,7 +139,7 @@ export class JupiterpClientV0 {
      * request.
      * @returns A promise that resolves to an ApiResponse containing the instructor data.
      */
-    public async instructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+    public async instructors(cfg: InstructorsConfig): Promise<InstructorsResponse> {
         return this.instructorsGeneric("instructors", cfg);
     }
 
@@ -143,7 +150,7 @@ export class JupiterpClientV0 {
      * request.
      * @returns A promise that resolves to an ApiResponse containing the instructor data.
      */
-    public async activeInstructors(cfg: InstructorConfig): Promise<InstructorResponse> {
+    public async activeInstructors(cfg: InstructorsConfig): Promise<InstructorsResponse> {
         return this.instructorsGeneric("instructors/active", cfg);
     }
 }

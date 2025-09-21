@@ -1,19 +1,19 @@
 export { JupiterpClientV0 } from "./api/client";
 export { Instructor } from "./common/instructor";
 export { Section } from "./common/section";
-export { CourseBasic } from "./common/course";
+export { CourseBasic, CourseMinified, Course } from "./common/course";
 export {
     CoursesConfig,
-    InstructorConfig,
+    InstructorsConfig,
     SectionsConfig,
 } from "./api/configs";
 export { 
     ApiResponse, 
-    InstructorResponse, 
+    InstructorsResponse, 
     SectionsResponse, 
     CoursesBasicResponse,
-    CourseMinifiedResponse,
-    CourseResponse
+    CoursesMinifiedResponse,
+    CoursesResponse
 } from "./api/responses";
 export { SortBy } from "./api/sort-by";
 export { CreditFilter, RatingFilter } from "./api/api-filters";

@@ -1,3 +1,7 @@
+/**
+ * An individual instructor; contains their slug (unique id on PlanetTerp),
+ * name, and average rating out of 5.
+ */
 export interface Instructor {
     /**
      * The internal string used to identify an individual instructor, unique

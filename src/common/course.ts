@@ -77,6 +77,9 @@ export interface CourseMinifiedRaw {
     name: string;
 }
 
+/**
+ * A minified course with only the course code and name.
+ */
 export interface CourseMinified {
     /**
      * The course code, e.g. "CMSC131".
@@ -110,6 +113,9 @@ export interface CourseRaw {
     sections: SectionRaw[] | null;
 }
 
+/**
+ * A course with all course info, including sections.
+ */
 export interface Course {
     /**
      * The course code, e.g. "CMSC131".

@@ -2,6 +2,10 @@ import { Course, CourseBasic, CourseMinified } from "../common/course";
 import { Instructor } from "../common/instructor";
 import { Section } from "../common/section";
 
+/**
+ * A generic API response wrapper that includes status information and the data
+ * returned by the API.
+ */
 export class ApiResponse<T> {
     /**
      * The HTTP status code of the response.
@@ -24,6 +28,10 @@ export class ApiResponse<T> {
         this.data = data;
     }
 
+    /**
+     * Checks if the response was successful.
+     * @returns True if the response status code indicates success (2xx), false otherwise.
+     */
     public ok(): boolean {
         return this.statusCode >= 200 && this.statusCode < 300;
     }
@@ -37,12 +45,12 @@ export type CoursesBasicResponse = ApiResponse<CourseBasic>;
 /**
  * A response to a minified courses request.
  */
-export type CourseMinifiedResponse = ApiResponse<CourseMinified>;
+export type CoursesMinifiedResponse = ApiResponse<CourseMinified>;
 
 /**
  * A response to a full courses request (with sections information).
  */
-export type CourseResponse = ApiResponse<Course>;
+export type CoursesResponse = ApiResponse<Course>;
 
 /**
  * A response to a sections request.
@@ -52,4 +60,4 @@ export type SectionsResponse = ApiResponse<Section>;
 /**
  * A response to an instructor request.
  */
-export type InstructorResponse = ApiResponse<Instructor>;
+export type InstructorsResponse = ApiResponse<Instructor>;

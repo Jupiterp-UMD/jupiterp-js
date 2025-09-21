@@ -1,9 +1,9 @@
-import { JupiterpClientV0, InstructorConfig, SortBy, InstructorResponse } from "../../src";
+import { JupiterpClientV0, InstructorsConfig, SortBy, InstructorsResponse } from "../../src";
 
 describe("instructors integration tests", () => {
     it("fetches instructors by name", async () => {
         const client = JupiterpClientV0.createDefault();
-        const cfg: InstructorConfig = {
+        const cfg: InstructorsConfig = {
             instructorNames: new Set(["Daniel Abadi", "Bahar Asgari"]),
             instructorSlugs: null,
             ratings: null,
@@ -12,7 +12,7 @@ describe("instructors integration tests", () => {
             sortBy: new SortBy().ascending("name"),
         };
 
-        const resp: InstructorResponse = await client.instructors(cfg);
+        const resp: InstructorsResponse = await client.instructors(cfg);
 
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
@@ -27,7 +27,7 @@ describe("instructors integration tests", () => {
 
     it("fetches instructors by slug", async () => {
         const client = JupiterpClientV0.createDefault();
-        const cfg: InstructorConfig = {
+        const cfg: InstructorsConfig = {
             instructorNames: null,
             instructorSlugs: new Set(["seyed", "abadi_daniel"]),
             ratings: null,
@@ -51,7 +51,7 @@ describe("instructors integration tests", () => {
 
     it("fetches only active instructors", async () => {
         const client = JupiterpClientV0.createDefault();
-        const cfg: InstructorConfig = {
+        const cfg: InstructorsConfig = {
             instructorNames: null,
             // seyed is not currently active. This test might fail in future.
             instructorSlugs: new Set(["abadi_daniel", "seyed"]),
