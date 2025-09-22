@@ -39,5 +39,9 @@
     "prettier": "^3.6.2",
     "ts-jest": "29.2.5",
     "typescript": "^5.9.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jupiterp-umd/jupiterp-js.git"
   }
 }
