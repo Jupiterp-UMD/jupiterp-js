@@ -125,6 +125,7 @@ Endpoint calls through the `JupiterpClientV0` return an `ApiResponse<T>` where `
 class ApiResponse<T> {
     public statusCode: number;
     public statusMessage: string;
+    public errorBody?: string;
     public data: T[] | null;
 
     public ok(): boolean {
@@ -589,7 +590,13 @@ class ApiResponse<T> {
      */
     public data: T[] | null;
 
-    constructor(statusCode: number, statusMessage: string, data: T[] | null);
+    /**
+     * The data returned by the API, or null if there was an error.
+     */
+    public data: T[] | null;
+
+    constructor(statusCode: number, statusMessage: string,
+                data: T[] | null, errorBody?: string);
 
     /**
      * Checks if the response was successful.

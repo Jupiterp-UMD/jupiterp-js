@@ -49,7 +49,8 @@ export class JupiterpClientV0 {
         const statusCode = res.status;
         const statusMessage = res.statusText;
         if (!res.ok) {
-            return new ApiResponse<CourseBasic>(statusCode, statusMessage, null);
+            const errorBody = await res.text();
+            return new ApiResponse<CourseBasic>(statusCode, statusMessage, null, errorBody);
         }
 
         const data = (await res.json()) as CourseBasicRaw[];
@@ -67,7 +68,8 @@ export class JupiterpClientV0 {
         const statusCode = res.status;
         const statusMessage = res.statusText;
         if (!res.ok) {
-            return new ApiResponse<CourseMinified>(statusCode, statusMessage, null);
+            const errorBody = await res.text();
+            return new ApiResponse<CourseMinified>(statusCode, statusMessage, null, errorBody);
         }
 
         const data = (await res.json()) as CourseMinifiedRaw[];
@@ -89,7 +91,8 @@ export class JupiterpClientV0 {
         const statusCode = res.status;
         const statusMessage = res.statusText;
         if (!res.ok) {
-            return new ApiResponse<Course>(statusCode, statusMessage, null);
+            const errorBody = await res.text();
+            return new ApiResponse<Course>(statusCode, statusMessage, null, errorBody);
         }
 
         const data = (await res.json()) as CourseRaw[];
@@ -110,7 +113,8 @@ export class JupiterpClientV0 {
         const statusCode = res.status;
         const statusMessage = res.statusText;
         if (!res.ok) {
-            return new ApiResponse<Section>(statusCode, statusMessage, null);
+            const errorBody = await res.text();
+            return new ApiResponse<Section>(statusCode, statusMessage, null, errorBody);
         }
 
         const data = (await res.json()) as SectionRaw[];
@@ -125,7 +129,8 @@ export class JupiterpClientV0 {
         const statusCode = resp.status;
         const statusMessage = resp.statusText;
         if (!resp.ok) {
-            return new ApiResponse<Instructor>(statusCode, statusMessage, null);
+            const errorBody = await resp.text();
+            return new ApiResponse<Instructor>(statusCode, statusMessage, null, errorBody);
         }
 
         const data = (await resp.json()) as Instructor[];

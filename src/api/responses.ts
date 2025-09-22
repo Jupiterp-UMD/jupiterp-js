@@ -18,14 +18,21 @@ export class ApiResponse<T> {
     public statusMessage: string;
 
     /**
+     * An optional error message returned by the API.
+     */
+    public errorBody?: string;
+
+    /**
      * The data returned by the API, or null if there was an error.
      */
     public data: T[] | null;
 
-    constructor(statusCode: number, statusMessage: string, data: T[] | null) {
+    constructor(statusCode: number, statusMessage: string,
+                data: T[] | null, errorBody?: string) {
         this.statusCode = statusCode;
         this.statusMessage = statusMessage;
         this.data = data;
+        this.errorBody = errorBody;
     }
 
     /**
