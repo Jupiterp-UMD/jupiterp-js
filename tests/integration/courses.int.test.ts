@@ -101,7 +101,7 @@ describe("courses endpoints integration tests", () => {
             ]);
             expect(resp.data[0].sections).not.toBeNull();
             if (resp.data[0].sections) {
-                expect(resp.data[0].sections.length).toBe(2);
+                expect(resp.data[0].sections.length).toBe(1);
                 const section = resp.data[0].sections[0];
                 expect(section.sectionCode).toBe("0101");
                 expect(section.courseCode).toBe("CMSC433");

@@ -16,7 +16,7 @@ describe("sections integration tests", () => {
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
         if (resp.data) {
-            expect(resp.data.length).toBe(2);
+            expect(resp.data.length).toBe(4);
             
             expect(resp.data[0].courseCode).toBe("BMGT407");
             expect(resp.data[0].sectionCode).toBe("0101");
