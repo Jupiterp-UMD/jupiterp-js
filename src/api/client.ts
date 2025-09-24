@@ -1,8 +1,35 @@
-import { Course, CourseBasic, CourseBasicRaw, CourseMinified, CourseMinifiedRaw, CourseRaw, parseRawCourse, parseRawCourseBasic, parseRawCourseMinified } from "../common/course";
-import { Instructor } from "../common/instructor";
-import { parseRawSection, Section, SectionRaw } from "../common/section";
-import { coursesConfigToQueryParams, CoursesConfig, InstructorsConfig, instructorsConfigToQueryParams, sectionsConfigToQueryParams, SectionsConfig } from "./configs";
-import { ApiResponse, CoursesMinifiedResponse, CoursesResponse, CoursesBasicResponse, InstructorsResponse, SectionsResponse } from "./responses";
+import {
+    type Course,
+    type CourseBasic,
+    type CourseBasicRaw,
+    type CourseMinified,
+    type CourseMinifiedRaw,
+    type CourseRaw,
+    parseRawCourse,
+    parseRawCourseBasic,
+    parseRawCourseMinified
+} from "../common/course.js";
+import { type Instructor } from "../common/instructor.js";
+import {
+    parseRawSection,
+    type Section,
+    type SectionRaw
+} from "../common/section.js";
+import {
+    type CoursesConfig, 
+    coursesConfigToQueryParams,
+    type InstructorsConfig,
+    instructorsConfigToQueryParams,
+    type SectionsConfig,
+    sectionsConfigToQueryParams
+} from "./configs.js";
+import { ApiResponse,
+    type CoursesMinifiedResponse,
+    type CoursesResponse,
+    type CoursesBasicResponse,
+    type InstructorsResponse,
+    type SectionsResponse
+} from "./responses.js";
 
 /**
  * A client for interacting with the Jupiterp API v0.

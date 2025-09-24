@@ -1,6 +1,10 @@
-import { Course, CourseBasic, CourseMinified } from "../common/course";
-import { Instructor } from "../common/instructor";
-import { Section } from "../common/section";
+import type {
+    Course,
+    CourseBasic,
+    CourseMinified
+} from "../common/course.js";
+import type {Instructor } from "../common/instructor.js";
+import type { Section } from "../common/section.js";
 
 /**
  * A generic API response wrapper that includes status information and the data

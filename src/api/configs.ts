@@ -1,6 +1,6 @@
-import { CreditFilter, RatingFilter } from "./api-filters";
-import { GenEd } from "../common/course-traits";
-import { SortBy } from "./sort-by";
+import { CreditFilter, RatingFilter } from "./api-filters.js";
+import { GenEd } from "../common/course-traits.js";
+import { SortBy } from "./sort-by.js";
 
 /**
  * Configuration for a request to any of the courses endpoints.

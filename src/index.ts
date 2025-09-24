@@ -1,20 +1,20 @@
-export { JupiterpClientV0 } from "./api/client";
-export { Instructor } from "./common/instructor";
-export { Section } from "./common/section";
-export { CourseBasic, CourseMinified, Course } from "./common/course";
-export {
+export { JupiterpClientV0 } from "./api/client.js";
+export type { Instructor } from "./common/instructor.js";
+export type { Section } from "./common/section.js";
+export type { CourseBasic, CourseMinified, Course } from "./common/course.js";
+export type {
     CoursesConfig,
     InstructorsConfig,
     SectionsConfig,
-} from "./api/configs";
+} from "./api/configs.js";
 export { 
     ApiResponse, 
-    InstructorsResponse, 
-    SectionsResponse, 
-    CoursesBasicResponse,
-    CoursesMinifiedResponse,
-    CoursesResponse
-} from "./api/responses";
-export { SortBy } from "./api/sort-by";
-export { CreditFilter, RatingFilter } from "./api/api-filters";
-export { GenEd } from "./common/course-traits";
+    type InstructorsResponse, 
+    type SectionsResponse, 
+    type CoursesBasicResponse,
+    type CoursesMinifiedResponse,
+    type CoursesResponse
+} from "./api/responses.js";
+export { SortBy } from "./api/sort-by.js";
+export { CreditFilter, RatingFilter } from "./api/api-filters.js";
+export { GenEd } from "./common/course-traits.js";
