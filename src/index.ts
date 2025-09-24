@@ -7,7 +7,7 @@ export type {
     InstructorsConfig,
     SectionsConfig,
 } from "./api/configs.js";
-export { 
+export {
     ApiResponse, 
     type InstructorsResponse, 
     type SectionsResponse, 

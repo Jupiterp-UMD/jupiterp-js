@@ -5,7 +5,6 @@ describe("sections integration tests", () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: SectionsConfig = {
             courseCodes: new Set(["BMGT407"]),
-            prefix: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("course_code").ascending("sec_code"),

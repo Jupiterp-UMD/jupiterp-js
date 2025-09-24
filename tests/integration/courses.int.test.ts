@@ -13,9 +13,6 @@ describe("courses endpoints integration tests", () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: CoursesConfig = {
             courseCodes: new Set(["CMSC131", "MATH140"]),
-            creditFilters: null,
-            genEds: null,
-            prefix: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("course_code"),
@@ -51,9 +48,6 @@ describe("courses endpoints integration tests", () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: CoursesConfig = {
             courseCodes: new Set(["CMSC131", "MATH140"]),
-            creditFilters: null,
-            genEds: null,
-            prefix: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("course_code"),
@@ -75,9 +69,6 @@ describe("courses endpoints integration tests", () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: CoursesConfig = {
             courseCodes: new Set(["CMSC433"]),
-            creditFilters: null,
-            genEds: null,
-            prefix: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("course_code"),

@@ -51,9 +51,6 @@ import { CoursesConfig, InstructorsConfig, SectionsConfig } from '@jupiterp/jupi
 // For all course-related endpoints
 const cCfg: CoursesConfig = {
     courseCodes: new Set(["CMSC131", "MATH140"]),
-    creditFilters: null,
-    genEds: null,
-    prefix: null,
     limit: 10,
     offset: 0,
     sortBy: new SortBy().ascending("course_code"),
@@ -62,8 +59,6 @@ const cCfg: CoursesConfig = {
 // For instructor-related endpoints
 const iCfg: InstructorsConfig = {
     instructorNames: new Set(["Daniel Abadi", "Bahar Asgari"]),
-    instructorSlugs: null,
-    ratings: null,
     limit: 10,
     offset: 0,
     sortBy: new SortBy().ascending("name"),
@@ -72,7 +67,6 @@ const iCfg: InstructorsConfig = {
 // For section-related endpoints
 const cfg: SectionsConfig = {
     courseCodes: new Set(["BMGT407"]),
-    prefix: null,
     limit: 10,
     offset: 0,
     sortBy: new SortBy().ascending("course_code").ascending("sec_code"),
@@ -446,40 +440,40 @@ interface CoursesConfig {
      * department code followed by the course number, e.g. "CMSC131".
      * Cannot set both courseCodes and prefix.
      */
-    courseCodes: Set<string> | null;
+    courseCodes?: Set<string>;
 
     /**
      * A prefix to filter course codes by. For instance, setting this to "CMSC"
      * will return all courses with a course code starting with "CMSC".
      * Cannot set both courseCodes and prefix.
      */
-    prefix: string | null;
+    prefix?: string;
 
     /**
      * A set of gen eds to filter courses by. If multiple GenEds are provided,
      * the results will be courses that require *all* of the provided GenEds.
      */
-    genEds: Set<GenEd> | null;
+    genEds?: Set<GenEd>;
 
     /**
      * Equalities and inequalities to filter courses by their number of credits.
      */
-    creditFilters: CreditFilter | null;
+    creditFilters?: CreditFilter;
 
     /**
      * The number of results to return. Defaults to 100, maximum of 500.
      */
-    limit: number | null;
+    limit?: number;
 
     /**
      * How many records to skip when returning results; defaults to 0
      */
-    offset: number | null;
+    offset?: number;
 
     /**
      * Columns to sort by when returning.
      */
-    sortBy: SortBy | null;
+    sortBy?: SortBy;
 }
 ```
 
@@ -494,7 +488,7 @@ interface InstructorsConfig {
      * A set of instructor names to get results for. Cannot set both
      * instructorNames and instructorSlugs.
      */
-    instructorNames: Set<string> | null;
+    instructorNames?: Set<string>;
 
     /**
      * A set of instructor slugs to get results for. Slugs are the internal
@@ -502,28 +496,28 @@ interface InstructorsConfig {
      * instructor. See PlanetTerp API spec for more info. Cannot set both
      * instructorNames and instructorSlugs.
      */
-    instructorSlugs: Set<string> | null;
+    instructorSlugs?: Set<string>;
 
     /**
      * Equalities and inequalities to filter instructors by their average
      * rating on PlanetTerp.
      */
-    ratings: RatingFilter | null;
+    ratings?: RatingFilter;
 
     /**
      * The number of results to return. Defaults to 100, maximum of 500.
      */
-    limit: number | null;
+    limit?: number;
 
     /**
      * How many records to skip when returning results; defaults to 0
      */
-    offset: number | null;
+    offset?: number;
 
     /**
      * Columns to sort by when returning.
      */
-    sortBy: SortBy | null;
+    sortBy?: SortBy;
 }
 ```
 
@@ -538,30 +532,30 @@ interface SectionsConfig {
      * A set of course codes to get results for. Cannot set both
      * courseCodes and prefix.
      */
-    courseCodes: Set<string> | null;
+    courseCodes?: Set<string>;
 
     /**
      * A prefix to filter course codes by. For instance, setting this to "CMSC"
      * will return all sections with a course code starting with "CMSC".
      * Cannot set both courseCodes and prefix.
      */
-    prefix: string | null;
+    prefix?: string;
 
     /**
      * Maximum number of section records to return; defaults to 100, 
      * maximum of 500.
      */
-    limit: number | null;
+    limit?: number;
 
     /**
      * How many records to skip when returning results; defaults to 0
      */
-    offset: number | null;
+    offset?: number;
 
     /**
      * Columns to sort by when returning.
      */
-    sortBy: SortBy | null;
+    sortBy?: SortBy;
 }
 ```
 

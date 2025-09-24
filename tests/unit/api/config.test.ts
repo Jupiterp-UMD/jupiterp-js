@@ -7,7 +7,6 @@ describe("instructorsConfigToQueryParams", () => {
     test("converts valid config to query params correctly", () => {
         const cfg = {
             instructorNames: new Set(["Jon Doe", "Jane Smith"]),
-            instructorSlugs: null,
             ratings: new RatingFilter().greaterThan(4.3).lessThan(5.0),
             limit: 10,
             offset: 5,
@@ -25,7 +24,6 @@ describe("sectionsConfigToQueryParams", () => {
     test("converts valid config to query params correctly", () => {
         const cfg = {
             courseCodes: new Set(["CMSC131", "MATH140"]),
-            prefix: null,
             limit: 20,
             offset: 5,
             sortBy: new SortBy().ascending("course_code").descending("sec_code"),

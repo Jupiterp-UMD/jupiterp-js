@@ -5,8 +5,6 @@ describe("instructors integration tests", () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: InstructorsConfig = {
             instructorNames: new Set(["Daniel Abadi", "Bahar Asgari"]),
-            instructorSlugs: null,
-            ratings: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("name"),
@@ -28,9 +26,7 @@ describe("instructors integration tests", () => {
     it("fetches instructors by slug", async () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: InstructorsConfig = {
-            instructorNames: null,
             instructorSlugs: new Set(["seyed", "abadi_daniel"]),
-            ratings: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("name"),
@@ -52,10 +48,8 @@ describe("instructors integration tests", () => {
     it("fetches only active instructors", async () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: InstructorsConfig = {
-            instructorNames: null,
             // seyed is not currently active. This test might fail in future.
             instructorSlugs: new Set(["abadi_daniel", "seyed"]),
-            ratings: null,
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("name"),

@@ -61,11 +61,8 @@ describe("JupiterpClientV0", () => {
     const client = new JupiterpClientV0("https://custom-url.com");
     const resp = await client.instructors({
       instructorNames: new Set(["John Doe", "Jane Smith"]),
-      instructorSlugs: null,
-      ratings: null,
       limit: 10,
       offset: 0,
-      sortBy: null,
     });
 
     expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/instructors?instructorNames=John+Doe%2CJane+Smith&limit=10&offset=0");
@@ -81,11 +78,8 @@ describe("JupiterpClientV0", () => {
     const client = new JupiterpClientV0("https://custom-url.com");
     const resp = await client.instructors({
       instructorNames: new Set(["John Doe", "Jane Smith"]),
-      instructorSlugs: null,
-      ratings: null,
       limit: 10,
       offset: 0,
-      sortBy: null,
     });
 
     expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/instructors?instructorNames=John+Doe%2CJane+Smith&limit=10&offset=0");
@@ -103,12 +97,9 @@ describe("JupiterpClientV0", () => {
 
     const client = new JupiterpClientV0("https://custom-url.com");
     const resp = await client.activeInstructors({
-      instructorNames: null,
       instructorSlugs: new Set(["doe"]),
-      ratings: null,
       limit: 5,
       offset: 0,
-      sortBy: null,
     });
 
     expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/instructors/active?instructorSlugs=doe&limit=5&offset=0");
@@ -118,13 +109,7 @@ describe("JupiterpClientV0", () => {
   });
 
   test("failed sections fetch has correct response", async () => {
-    const args: SectionsConfig = {
-      courseCodes: null,
-      prefix: null,
-      limit: null,
-      offset: null,
-      sortBy: null,
-    }
+    const args: SectionsConfig = {}
     const mockResponse = new Response(null, { status: 404, statusText: "Not Found" });
     fetchMock.mockResolvedValueOnce(mockResponse);
 
@@ -139,11 +124,6 @@ describe("JupiterpClientV0", () => {
 
   test("successfully fetches sections", async () => {
     const args: SectionsConfig = {
-      courseCodes: null,
-      prefix: null,
-      limit: null,
-      offset: null,
-      sortBy: null,
     }
     const mockSections: SectionRaw[] = [
       { course_code: "CMSC131", sec_code: "0101", instructors: ["John Doe"], meetings: ["OnlineAsync"], open_seats: 5, total_seats: 30, waitlist: 0, holdfile: null },
@@ -174,12 +154,8 @@ describe("JupiterpClientV0", () => {
   test("fetches basic courses", async () => {
     const args: CoursesConfig = {
       courseCodes: new Set(["CMSC131", "MATH140"]),
-      creditFilters: null,
-      genEds: null,
-      prefix: null,
       limit: 10,
       offset: 0,
-      sortBy: null,
     };
     const mockCourses: CourseBasicRaw[] = [
       { course_code: "CMSC131", name: "Object-Oriented Programming I", min_credits: 3, max_credits: null, description: "Introduction to object-oriented programming.", gen_eds: null, conditions: ["Prerequisite: MATH140"]},
