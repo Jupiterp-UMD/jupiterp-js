@@ -99,4 +99,23 @@ describe("courses endpoints integration tests", () => {
             }
         }
     });
+
+    it("fetches basic course by number", async () => {
+        const client = JupiterpClientV0.createDefault();
+        const cfg: CoursesConfig = {
+            number: "123",
+            limit: 2,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code"),
+        };
+        const resp: CoursesBasicResponse = await client.courses(cfg);
+
+        expect(resp.statusCode).toBe(200);
+        expect(resp.data).not.toBeNull();
+        if (resp.data) {
+            expect(resp.data.length).toBe(2);
+            expect(resp.data[0].courseCode).toBe("AOSC123");
+            expect(resp.data[1].courseCode).toBe("FMSC123");
+        }
+    });
 });

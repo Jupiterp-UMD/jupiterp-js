@@ -8,6 +8,7 @@ import { SortBy } from "./sort-by.js";
  * Fields:
  * - `courseCodes?: Set<string>`
  * - `prefix?: string`
+ * - `number?: string`
  * - `genEds?: Set<GenEd>`
  * - `creditFilters?: CreditFilter`
  * - `limit?: number`
@@ -18,16 +19,28 @@ export interface CoursesConfig {
     /**
      * A set of course codes to get results for. Course codes are the
      * department code followed by the course number, e.g. "CMSC131".
-     * Cannot set both courseCodes and prefix.
+     * Cannot set more than one of courseCodes, prefix, or number.
      */
     courseCodes?: Set<string>;
 
     /**
      * A prefix to filter course codes by. For instance, setting this to "CMSC"
      * will return all courses with a course code starting with "CMSC".
-     * Cannot set both courseCodes and prefix.
+     * Cannot set more than one of courseCodes, prefix, or number.
      */
     prefix?: string;
+
+    /**
+     * A specific course number to filter courses by. For instance, setting
+     * this to "131" will return all courses with a course number of 131,
+     * regardless of department.
+     * 
+     * Note: This is different from the `prefix` field, which filters by
+     * department code.
+     * 
+     * Cannot set more than one of courseCodes, prefix, or number.
+     */
+    number?: string;
 
     /**
      * A set of gen eds to filter courses by. If multiple GenEds are provided,
@@ -63,6 +76,9 @@ export function coursesConfigToQueryParams(cfg: CoursesConfig): URLSearchParams 
     }
     if (cfg.prefix) {
         params.append("prefix", cfg.prefix);
+    }
+    if (cfg.number) {
+        params.append("number", cfg.number);
     }
     if (cfg.genEds && cfg.genEds.size > 0) {
         params.append("genEds", Array.from(cfg.genEds).join(","));
