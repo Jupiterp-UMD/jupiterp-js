@@ -13,7 +13,8 @@ export {
     type SectionsResponse, 
     type CoursesBasicResponse,
     type CoursesMinifiedResponse,
-    type CoursesResponse
+    type CoursesResponse,
+    type DepartmentsResponse
 } from "./api/responses.js";
 export { SortBy } from "./api/sort-by.js";
 export { CreditFilter, RatingFilter } from "./api/api-filters.js";

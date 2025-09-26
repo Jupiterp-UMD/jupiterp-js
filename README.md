@@ -109,6 +109,9 @@ const instructorsRes: InstructorsResponse = await client.instructors(instructors
 
 // List of active instructors (API path: /v0/instructors/active)
 const activeInstructorsRes: InstructorsResponse = await client.activeInstructors(instructorsConfig);
+
+// A list of all 4-letter department codes.
+public async deptList(): Promise<DepartmentsResponse>;
 ```
 
 #### Extracting data from a response
@@ -136,6 +139,7 @@ type CoursesMinifiedResponse = ApiResponse<CourseMinified>;
 type CoursesResponse = ApiResponse<Course>;
 type SectionsResponse = ApiResponse<Section>;
 type InstructorsResponse = ApiResponse<Instructor>;
+type DepartmentsResponse = ApiResponse<string>;
 ```
 
 Extracting data can be done like so:
@@ -438,16 +442,28 @@ interface CoursesConfig {
     /**
      * A set of course codes to get results for. Course codes are the
      * department code followed by the course number, e.g. "CMSC131".
-     * Cannot set both courseCodes and prefix.
+     * Cannot set more than one of courseCodes, prefix, or number.
      */
     courseCodes?: Set<string>;
 
     /**
      * A prefix to filter course codes by. For instance, setting this to "CMSC"
      * will return all courses with a course code starting with "CMSC".
-     * Cannot set both courseCodes and prefix.
+     * Cannot set more than one of courseCodes, prefix, or number.
      */
     prefix?: string;
+
+    /**
+     * A specific course number to filter courses by. For instance, setting
+     * this to "131" will return all courses with a course number of 131,
+     * regardless of department.
+     * 
+     * Note: This is different from the `prefix` field, which filters by
+     * department code.
+     * 
+     * Cannot set more than one of courseCodes, prefix, or number.
+     */
+    number?: string;
 
     /**
      * A set of gen eds to filter courses by. If multiple GenEds are provided,

@@ -72,3 +72,8 @@ export type SectionsResponse = ApiResponse<Section>;
  * A response to an instructor request.
  */
 export type InstructorsResponse = ApiResponse<Instructor>;
+
+/**
+ * A response to a departments list request.
+ */
+export type DepartmentsResponse = ApiResponse<string>;

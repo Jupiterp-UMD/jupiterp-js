@@ -1,9 +1,9 @@
-import { JupiterpClientV0 } from "../../src";
+import { DepartmentsResponse, JupiterpClientV0 } from "../../src";
 
 describe("department endpoints integration tests", () => {
     it("fetches list of department codes", async () => {
         const client = JupiterpClientV0.createDefault();
-        const resp = await client.deptList();
+        const resp: DepartmentsResponse = await client.deptList();
 
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();

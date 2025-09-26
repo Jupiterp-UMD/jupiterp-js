@@ -29,7 +29,8 @@ import { ApiResponse,
     type CoursesResponse,
     type CoursesBasicResponse,
     type InstructorsResponse,
-    type SectionsResponse
+    type SectionsResponse,
+    type DepartmentsResponse
 } from "./responses.js";
 
 /**
@@ -192,7 +193,7 @@ export class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the list
      * of unique 4-letter department codes.
      */
-    public async deptList(): Promise<ApiResponse<string>> {
+    public async deptList(): Promise<DepartmentsResponse> {
         const url = `${this.dbUrl}/v0/deptList`;
         const res = await fetch(url);
         const statusCode = res.status;
