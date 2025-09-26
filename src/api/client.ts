@@ -9,6 +9,7 @@ import {
     parseRawCourseBasic,
     parseRawCourseMinified
 } from "../common/course.js";
+import type { DeptCode } from "../common/dept-code.js";
 import { type Instructor } from "../common/instructor.js";
 import {
     parseRawSection,
@@ -184,5 +185,25 @@ export class JupiterpClientV0 {
      */
     public async activeInstructors(cfg: InstructorsConfig): Promise<InstructorsResponse> {
         return this.instructorsGeneric("instructors/active", cfg);
+    }
+
+    /**
+     * Get a list of unique 4-letter department codes.
+     * @returns A promise that resolves to an ApiResponse containing the list
+     * of unique 4-letter department codes.
+     */
+    public async deptList(): Promise<ApiResponse<string>> {
+        const url = `${this.dbUrl}/v0/deptList`;
+        const res = await fetch(url);
+        const statusCode = res.status;
+        const statusMessage = res.statusText;
+        if (!res.ok) {
+            const errorBody = await res.text();
+            return new ApiResponse<string>(statusCode, statusMessage, null, errorBody);
+        }
+
+        const data = (await res.json()) as DeptCode[];
+        const deptCodes = data.map((d) => d.dept_code);
+        return new ApiResponse<string>(statusCode, statusMessage, deptCodes);
     }
 }

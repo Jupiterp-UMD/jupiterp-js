@@ -175,4 +175,26 @@ describe("JupiterpClientV0", () => {
       { courseCode: "MATH140", name: "Calculust I", minCredits: 4, maxCredits: null, description: "Differential and integral calculus of one variable.", genEds: [GenEd.FSMA], conditions: null},
     ]);
   });
+
+  test("fetches department codes", async () => {
+    const mockDeptCodes = [
+      { dept_code: "CMSC" },
+      { dept_code: "MATH" },
+      { dept_code: "ENEE" },
+    ];
+    const mockResponse = new Response(JSON.stringify(mockDeptCodes), { status: 200, statusText: "OK" });
+    fetchMock.mockResolvedValueOnce(mockResponse);
+
+    const client = new JupiterpClientV0("https://custom-url.com");
+    const resp = await client.deptList();
+
+    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/deptList");
+    expect(resp.statusCode).toBe(200);
+    expect(resp.statusMessage).toBe("OK");
+    expect(resp.data).toEqual([
+      "CMSC",
+      "MATH",
+      "ENEE", 
+    ]);
+  });
 });
