@@ -118,4 +118,17 @@ describe("courses endpoints integration tests", () => {
             expect(resp.data[1].courseCode).toBe("FMSC123");
         }
     });
+
+    it("fetches a full department of courses with sections", async () => {
+        const client = JupiterpClientV0.createDefault();
+        const cfg: CoursesConfig = {
+            prefix: "CMSC",
+            limit: 5,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code"),
+        };
+        const resp: CoursesResponse = await client.coursesWithSections(cfg);
+        expect(resp.statusCode).toBe(200);
+        expect(resp.data).not.toBeNull();
+    });
 });

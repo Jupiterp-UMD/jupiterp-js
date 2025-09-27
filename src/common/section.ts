@@ -55,6 +55,8 @@ export type ClassMeeting =
     | "OnlineAsync"
     | "Unknown"
     | "TBA"
+    | "Unspecified"
+    | "Unknown"
     | { classtime: Classtime; location: Location; };
 
 /**
@@ -98,8 +100,13 @@ function classMeetingFromString(s: string): ClassMeeting {
             return "Unknown";
         case "TBA":
             return "TBA";
+        case "Unspecified":
+            return "Unspecified";
         default:
             const parts = s.split("-");
+            if (parts.length < 3) {
+                return "Unknown";
+            }
             const days = parts[0];
             const start = parseTime(parts[1]);
             const end = parseTime(parts[2]);
