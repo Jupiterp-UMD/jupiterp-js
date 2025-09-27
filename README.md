@@ -304,6 +304,32 @@ interface Section {
      */
     holdfile: number | null;
 }
+
+export type ClassMeeting =
+    | "OnlineAsync"
+    | "Unknown"
+    | "TBA"
+    | { classtime: Classtime | null; location: Location | null; };
+
+/**
+ * A time and days when a class meets. The start and end times are represented
+ * as the number of hours plus a decimal component representing the number of
+ * minutes as a fraction of an hour. For example, 1:30 PM would be represented
+ * as 13.5.
+ */
+export interface Classtime {
+    days: string;
+    start: number;
+    end: number;
+}
+
+/**
+ * The location at which a class meeting takes place.
+ */
+export interface Location {
+    building: string;
+    room: string;
+}
 ```
 
 ##### CourseBasic
