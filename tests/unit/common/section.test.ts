@@ -105,7 +105,7 @@ describe("section data conversion", () => {
                 },
                 {
                     classtime: { days: "T", start: 14, end: 16 },
-                    location: { building: "OnlineSync", room: "" }
+                    location: { building: "OnlineSync", room: null }
                 }
             ],
             openSeats: 2,

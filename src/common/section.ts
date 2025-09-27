@@ -55,7 +55,7 @@ export type ClassMeeting =
     | "OnlineAsync"
     | "Unknown"
     | "TBA"
-    | { classtime: Classtime | null; location: Location | null; };
+    | { classtime: Classtime; location: Location; };
 
 /**
  * A time and days when a class meets. The start and end times are represented
@@ -74,7 +74,7 @@ export interface Classtime {
  */
 export interface Location {
     building: string;
-    room: string;
+    room: string | null;
 }
 
 function parseTime(s: string): number {
@@ -104,7 +104,7 @@ function classMeetingFromString(s: string): ClassMeeting {
             const start = parseTime(parts[1]);
             const end = parseTime(parts[2]);
             const building = parts[3];
-            const room = parts.length > 4 ? parts[4] : "";
+            const room = parts.length > 4 ? parts[4] : null;
             return {
                 classtime: { days, start, end },
                 location: { building, room },

@@ -137,7 +137,7 @@ describe("JupiterpClientV0", () => {
       { courseCode: "MATH140", sectionCode: "0201", instructors: ["Jane Smith"], meetings: ["TBA"], openSeats: 0, totalSeats: 25, waitlist: 10, holdfile: 2 },
       { courseCode: "BMGT298M", sectionCode: "0101", instructors: ["Testudo Testudo"], meetings: ["Unknown"], openSeats: 0, totalSeats: 0, waitlist: 0, holdfile: null },
       { courseCode: "ENEE150", sectionCode: "0301", instructors: ["Alice Johnson"], meetings: [{ classtime: { days: "MWF", start: 10.0, end: 11.0 }, location: { building: "ENGR", room: "2100" } }], openSeats: 3, totalSeats: 40, waitlist: 5, holdfile: 1 },
-      { courseCode: "ASTR320", sectionCode: "F010", instructors: ["Albuquerque Joe", "Jennifer Tallahassee"], meetings: [{ classtime: { days: "MWF", start: 10.0, end: 10.75 }, location: { building: "ESJ", room: "0101" } }, { classtime: { days: "T", start: 14.0, end: 16.0 }, location: { building: "OnlineSync", room: "" } }], openSeats: 2, totalSeats: 20, waitlist: 0, holdfile: null },
+      { courseCode: "ASTR320", sectionCode: "F010", instructors: ["Albuquerque Joe", "Jennifer Tallahassee"], meetings: [{ classtime: { days: "MWF", start: 10.0, end: 10.75 }, location: { building: "ESJ", room: "0101" } }, { classtime: { days: "T", start: 14.0, end: 16.0 }, location: { building: "OnlineSync", room: null } }], openSeats: 2, totalSeats: 20, waitlist: 0, holdfile: null },
     ];
     const mockResponse = new Response(JSON.stringify(mockSections), { status: 200, statusText: "OK" });
     fetchMock.mockResolvedValueOnce(mockResponse);
