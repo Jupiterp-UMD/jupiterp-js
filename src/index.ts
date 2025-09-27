@@ -1,6 +1,6 @@
 export { JupiterpClientV0 } from "./api/client.js";
 export type { Instructor } from "./common/instructor.js";
-export type { Section } from "./common/section.js";
+export type { Section, ClassMeeting } from "./common/section.js";
 export type { CourseBasic, CourseMinified, Course } from "./common/course.js";
 export type {
     CoursesConfig,
