@@ -6,6 +6,7 @@ export type {
     Location,
     Classtime
 } from "./common/section.js";
+export type { Department } from "./common/department.js";
 export type { CourseBasic, CourseMinified, Course } from "./common/course.js";
 export type {
     CoursesConfig,

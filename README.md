@@ -139,7 +139,7 @@ type CoursesMinifiedResponse = ApiResponse<CourseMinified>;
 type CoursesResponse = ApiResponse<Course>;
 type SectionsResponse = ApiResponse<Section>;
 type InstructorsResponse = ApiResponse<Instructor>;
-type DepartmentsResponse = ApiResponse<string>;
+type DepartmentsResponse = ApiResponse<Department>;
 ```
 
 Extracting data can be done like so:
@@ -453,6 +453,18 @@ interface Course {
      * A list of sections for this course, or null if no sections are found.
      */
     sections: Section[] | null;
+}
+```
+
+##### Department
+
+```ts
+/**
+ * A department
+ */
+export interface Department {
+    deptCode: string;
+    name: string;
 }
 ```
 
