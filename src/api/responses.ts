@@ -3,6 +3,7 @@ import type {
     CourseBasic,
     CourseMinified
 } from "../common/course.js";
+import type { Department } from "../common/department.js";
 import type {Instructor } from "../common/instructor.js";
 import type { Section } from "../common/section.js";
 
@@ -76,4 +77,4 @@ export type InstructorsResponse = ApiResponse<Instructor>;
 /**
  * A response to a departments list request.
  */
-export type DepartmentsResponse = ApiResponse<string>;
+export type DepartmentsResponse = ApiResponse<Department>;

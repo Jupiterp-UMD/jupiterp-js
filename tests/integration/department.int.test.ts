@@ -9,8 +9,10 @@ describe("department endpoints integration tests", () => {
         expect(resp.data).not.toBeNull();
         if (resp.data) {
             expect(resp.data.length).toBeGreaterThan(0);
-            expect(resp.data[0]).toBe("AAAS");
-            expect(resp.data[1]).toBe("AAST");
+            expect(resp.data[0].deptCode).toBe("AAAS");
+            expect(resp.data[0].name).toBe("African American and Africana Studies");
+            expect(resp.data[1].deptCode).toBe("AAST");
+            expect(resp.data[1].name).toBe("Asian American Studies");
         }
     });
 });

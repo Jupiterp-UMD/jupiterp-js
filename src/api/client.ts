@@ -9,7 +9,7 @@ import {
     parseRawCourseBasic,
     parseRawCourseMinified
 } from "../common/course.js";
-import type { DeptCode } from "../common/dept-code.js";
+import type { Department, DepartmentRaw } from "../common/department.js";
 import { type Instructor } from "../common/instructor.js";
 import {
     parseRawSection,
@@ -200,11 +200,16 @@ export class JupiterpClientV0 {
         const statusMessage = res.statusText;
         if (!res.ok) {
             const errorBody = await res.text();
-            return new ApiResponse<string>(statusCode, statusMessage, null, errorBody);
+            return new ApiResponse<Department>(statusCode, statusMessage, null, errorBody);
         }
 
-        const data = (await res.json()) as DeptCode[];
-        const deptCodes = data.map((d) => d.dept_code);
-        return new ApiResponse<string>(statusCode, statusMessage, deptCodes);
+        const data = (await res.json()) as DepartmentRaw[];
+        const processed: Department[] = data.map((d) => {
+            return {
+                deptCode: d.dept_code,
+                name: d.name,
+            };
+        });
+        return new ApiResponse<Department>(statusCode, statusMessage, processed);
     }
 }

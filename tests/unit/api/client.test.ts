@@ -178,9 +178,9 @@ describe("JupiterpClientV0", () => {
 
   test("fetches department codes", async () => {
     const mockDeptCodes = [
-      { dept_code: "CMSC" },
-      { dept_code: "MATH" },
-      { dept_code: "ENEE" },
+      { dept_code: "CMSC", name: "Computer Science" },
+      { dept_code: "MATH", name: "Mathematics" },
+      { dept_code: "ENEE", name: "Electrical Engineering" },
     ];
     const mockResponse = new Response(JSON.stringify(mockDeptCodes), { status: 200, statusText: "OK" });
     fetchMock.mockResolvedValueOnce(mockResponse);
@@ -192,9 +192,9 @@ describe("JupiterpClientV0", () => {
     expect(resp.statusCode).toBe(200);
     expect(resp.statusMessage).toBe("OK");
     expect(resp.data).toEqual([
-      "CMSC",
-      "MATH",
-      "ENEE", 
+      { deptCode: "CMSC", name: "Computer Science" },
+      { deptCode: "MATH", name: "Mathematics" },
+      { deptCode: "ENEE", name: "Electrical Engineering" },
     ]);
   });
 });
