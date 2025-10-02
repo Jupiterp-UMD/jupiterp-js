@@ -309,7 +309,9 @@ export type ClassMeeting =
     | "OnlineAsync"
     | "Unknown"
     | "TBA"
-    | { classtime: Classtime | null; location: Location | null; };
+    | "Unspecified"
+    | "No Meetings"
+    | { classtime: Classtime; location: Location; };
 
 /**
  * A time and days when a class meets. The start and end times are represented

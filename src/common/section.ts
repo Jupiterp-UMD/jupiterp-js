@@ -56,7 +56,7 @@ export type ClassMeeting =
     | "Unknown"
     | "TBA"
     | "Unspecified"
-    | "Unknown"
+    | "No Meetings"
     | { classtime: Classtime; location: Location; };
 
 /**
