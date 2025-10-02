@@ -129,7 +129,9 @@ export function parseRawSection(raw: SectionRaw): Section {
         courseCode: raw.course_code,
         sectionCode: raw.sec_code,
         instructors: raw.instructors,
-        meetings: raw.meetings.map(classMeetingFromString),
+        meetings: raw.meetings.length > 0 
+                    ? raw.meetings.map(classMeetingFromString)
+                    : ["No Sections"],
         openSeats: raw.open_seats,
         totalSeats: raw.total_seats,
         waitlist: raw.waitlist,
