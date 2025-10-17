@@ -48,9 +48,19 @@ All endpoints (except `health()`) take a config object, which contains the confi
 ```ts
 import { CoursesConfig, InstructorsConfig, SectionsConfig } from '@jupiterp/jupiterp`;
 
-// For all course-related endpoints
+// For course endpoints without sections
 const cCfg: CoursesConfig = {
     courseCodes: new Set(["CMSC131", "MATH140"]),
+    limit: 10,
+    offset: 0,
+    sortBy: new SortBy().ascending("course_code"),
+};
+
+// For course endpoints with sections
+const csCfg: CoursesWithSectionsConfig = {
+    courseCodes: new Set(["CMSC131", "MATH140"]),
+    onlyOpen: true,
+    instructor: "Darryll Pines",
     limit: 10,
     offset: 0,
     sortBy: new SortBy().ascending("course_code"),
@@ -67,6 +77,7 @@ const iCfg: InstructorsConfig = {
 // For section-related endpoints
 const cfg: SectionsConfig = {
     courseCodes: new Set(["BMGT407"]),
+    instructor: "Darryll Pines",
     limit: 10,
     offset: 0,
     sortBy: new SortBy().ascending("course_code").ascending("sec_code"),
@@ -99,7 +110,7 @@ const courseRes: CoursesBasicResponse = await client.courses(coursesConfig);
 const minifiedCourseRes: CoursesMinifiedResponse = await client.courses(coursesConfig);
 
 // List of courses with section data (API path: /v0/courses/withSections)
-const coursesWithSecRes: CoursesResponse = await client.coursesWithSections(coursesConfig);
+const coursesWithSecRes: CoursesResponse = await client.coursesWithSections(coursesWithSectionsConfig);
 
 // List of sections (API path: /v0/sections)
 const sectionsRes: SectionsResponse = await client.sections(sectionsConfig);
@@ -207,7 +218,7 @@ class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the course
      * and section data.
      */
-    public async coursesWithSections(cfg: CoursesConfig): Promise<CoursesResponse>;
+    public async coursesWithSections(cfg: CoursesWithSectionsConfig): Promise<CoursesResponse>;
 
     /**
      * Get a list of sections based on the provided configuration.
@@ -533,6 +544,40 @@ interface CoursesConfig {
 }
 ```
 
+##### CoursesWithSectionsConfig
+
+```ts
+/**
+ * Configuration for a request to courses-with-sections endpoints.
+ * 
+ * Fields:
+ * - `courseCodes?: Set<string>`
+ * - `prefix?: string`
+ * - `number?: string`
+ * - `genEds?: Set<GenEd>`
+ * - `creditFilters?: CreditFilter`
+ * - `limit?: number`
+ * - `offset?: number`
+ * - `sortBy?: SortBy`
+ */
+export interface CoursesWithSectionsConfig extends CoursesConfig {
+    /**
+     * Filter sections by total class size (capacity).
+     */
+    totalClassSize?: number;
+
+    /**
+     * If true, only return sections with more then 0 open seats.
+     */
+    onlyOpen?: boolean;
+
+    /**
+     * Only return sections taught by this instructor (full name, case-sensitive).
+     */
+    instructor?: string;
+}
+```
+
 ##### InstructorsConfig
 
 ```ts
@@ -582,8 +627,18 @@ interface InstructorsConfig {
 ```ts
 /**
  * Configuration for a request to sections endpoints.
+ * 
+ * Fields:
+ * - `courseCodes?: Set<string>`
+ * - `prefix?: string`
+ * - `totalClassSize?: number`
+ * - `onlyOpen?: boolean`
+ * - `instructor?: string`
+ * - `limit?: number`
+ * - `offset?: number`
+ * - `sortBy?: SortBy`
  */
-interface SectionsConfig {
+export interface SectionsConfig {
     /**
      * A set of course codes to get results for. Cannot set both
      * courseCodes and prefix.
@@ -596,6 +651,21 @@ interface SectionsConfig {
      * Cannot set both courseCodes and prefix.
      */
     prefix?: string;
+
+    /**
+     * Filter sections by total class size (capacity).
+     */
+    totalClassSize?: number;
+
+    /**
+     * If true, only return sections with more then 0 open seats.
+     */
+    onlyOpen?: boolean;
+
+    /**
+     * Only return sections taught by this instructor (full name, case-sensitive).
+     */
+    instructor?: string;
 
     /**
      * Maximum number of section records to return; defaults to 100, 
