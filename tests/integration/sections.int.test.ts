@@ -26,4 +26,27 @@ describe("sections integration tests", () => {
             expect(resp.data[0].meetings[1]).toBe("OnlineAsync");
         }
     });
+
+    it("fetches sections by instructor", async () => {
+        const client = JupiterpClientV0.createDefault();
+        const cfg: SectionsConfig = {
+            instructor: "Daniel Abadi",
+            limit: 10,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code").ascending("sec_code"),
+        };
+
+        const resp = await client.sections(cfg);
+
+        expect(resp.statusCode).toBe(200);
+        expect(resp.data).not.toBeNull();
+        if (resp.data) {
+            expect(resp.data.length).toBe(2);
+
+            expect(resp.data[0].courseCode).toBe("CMSC624");
+            expect(resp.data[0].sectionCode).toBe("0101");
+            expect(resp.data[1].courseCode).toBe("CMSC624");
+            expect(resp.data[1].sectionCode).toBe("PJ01");
+        }
+    });
 });

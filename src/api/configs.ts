@@ -101,11 +101,59 @@ export function coursesConfigToQueryParams(cfg: CoursesConfig): URLSearchParams 
 }
 
 /**
+ * Configuration for a request to courses-with-sections endpoints.
+ * 
+ * Fields:
+ * - `courseCodes?: Set<string>`
+ * - `prefix?: string`
+ * - `number?: string`
+ * - `genEds?: Set<GenEd>`
+ * - `creditFilters?: CreditFilter`
+ * - `limit?: number`
+ * - `offset?: number`
+ * - `sortBy?: SortBy`
+ */
+export interface CoursesWithSectionsConfig extends CoursesConfig {
+    /**
+     * Filter sections by total class size (capacity).
+     */
+    totalClassSize?: number;
+
+    /**
+     * If true, only return sections with more then 0 open seats.
+     */
+    onlyOpen?: boolean;
+
+    /**
+     * Only return sections taught by this instructor (full name, case-sensitive).
+     */
+    instructor?: string;
+}
+
+export function coursesWithSectionsConfigToQueryParams(
+                cfg: CoursesWithSectionsConfig): URLSearchParams {
+    const params = coursesConfigToQueryParams(cfg);
+    if (cfg.totalClassSize !== null && cfg.totalClassSize !== undefined) {
+        params.append("totalClassSize", cfg.totalClassSize.toString());
+    }
+    if (cfg.onlyOpen !== null && cfg.onlyOpen !== undefined) {
+        params.append("onlyOpen", cfg.onlyOpen.toString());
+    }
+    if (cfg.instructor) {
+        params.append("instructor", cfg.instructor);
+    }
+    return params;
+}
+
+/**
  * Configuration for a request to sections endpoints.
  * 
  * Fields:
  * - `courseCodes?: Set<string>`
  * - `prefix?: string`
+ * - `totalClassSize?: number`
+ * - `onlyOpen?: boolean`
+ * - `instructor?: string`
  * - `limit?: number`
  * - `offset?: number`
  * - `sortBy?: SortBy`
@@ -123,6 +171,21 @@ export interface SectionsConfig {
      * Cannot set both courseCodes and prefix.
      */
     prefix?: string;
+
+    /**
+     * Filter sections by total class size (capacity).
+     */
+    totalClassSize?: number;
+
+    /**
+     * If true, only return sections with more then 0 open seats.
+     */
+    onlyOpen?: boolean;
+
+    /**
+     * Only return sections taught by this instructor (full name, case-sensitive).
+     */
+    instructor?: string;
 
     /**
      * Maximum number of section records to return; defaults to 100, 
@@ -148,6 +211,15 @@ export function sectionsConfigToQueryParams(cfg: SectionsConfig): URLSearchParam
     }
     if (cfg.prefix) {
         params.append("prefix", cfg.prefix);
+    }
+    if (cfg.totalClassSize !== null && cfg.totalClassSize !== undefined) {
+        params.append("totalClassSize", cfg.totalClassSize.toString());
+    }
+    if (cfg.onlyOpen !== null && cfg.onlyOpen !== undefined) {
+        params.append("onlyOpen", cfg.onlyOpen.toString());
+    }
+    if (cfg.instructor) {
+        params.append("instructor", cfg.instructor);
     }
     if (cfg.limit !== null && cfg.limit !== undefined) {
         params.append("limit", cfg.limit.toString());

@@ -19,6 +19,8 @@ import {
 import {
     type CoursesConfig, 
     coursesConfigToQueryParams,
+    type CoursesWithSectionsConfig,
+    coursesWithSectionsConfigToQueryParams,
     type InstructorsConfig,
     instructorsConfigToQueryParams,
     type SectionsConfig,
@@ -113,8 +115,9 @@ export class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the course
      * and section data.
      */
-    public async coursesWithSections(cfg: CoursesConfig): Promise<CoursesResponse> {
-        const params = coursesConfigToQueryParams(cfg);
+    public async coursesWithSections(
+                    cfg: CoursesWithSectionsConfig): Promise<CoursesResponse> {
+        const params = coursesWithSectionsConfigToQueryParams(cfg);
         const url = `${this.dbUrl}/v0/courses/withSections?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;

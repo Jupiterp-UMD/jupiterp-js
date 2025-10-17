@@ -7,6 +7,7 @@ import {
     CoursesResponse,
     CoursesMinifiedResponse
 } from "../../src";
+import { CoursesWithSectionsConfig } from "../../src/api/configs";
 
 describe("courses endpoints integration tests", () => {
     it("fetches basic course info by course codes", async () => {
@@ -131,4 +132,27 @@ describe("courses endpoints integration tests", () => {
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
     });
+
+    it("fetches course and sections by instructor", async () => {
+        const client = JupiterpClientV0.createDefault();
+        const cfg: CoursesWithSectionsConfig = {
+            prefix: "CMSC",
+            limit: 10,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code"),
+            instructor: "Daniel Abadi",
+        };
+        const resp: CoursesResponse = await client.coursesWithSections(cfg);
+        expect(resp.statusCode).toBe(200);
+        expect(resp.data).not.toBeNull();
+        if (resp.data) {
+            expect(resp.data.length).toBe(1);
+            expect(resp.data[0].courseCode).toBe("CMSC624");
+            expect(resp.data[0].sections?.length).toBe(2);
+            if (resp.data[0].sections) {
+                expect(resp.data[0].sections[0].sectionCode).toBe("0101");
+                expect(resp.data[0].sections[1].sectionCode).toBe("PJ01");
+            }
+        }
+    }); 
 });

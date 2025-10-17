@@ -48,8 +48,8 @@ describe("instructors integration tests", () => {
     it("fetches only active instructors", async () => {
         const client = JupiterpClientV0.createDefault();
         const cfg: InstructorsConfig = {
-            // seyed is not currently active. This test might fail in future.
-            instructorSlugs: new Set(["abadi_daniel", "seyed"]),
+            // abay is not currently active. This test might fail in future.
+            instructorSlugs: new Set(["abadi_daniel", "abay"]),
             limit: 10,
             offset: 0,
             sortBy: new SortBy().ascending("name"),
