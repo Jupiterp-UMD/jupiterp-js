@@ -556,6 +556,9 @@ interface CoursesConfig {
  * - `number?: string`
  * - `genEds?: Set<GenEd>`
  * - `creditFilters?: CreditFilter`
+ * - `totalClassSize?: TotalClassSizeFilter`
+ * - `onlyOpen?: boolean`
+ * - `instructor?: string`
  * - `limit?: number`
  * - `offset?: number`
  * - `sortBy?: SortBy`
@@ -564,7 +567,7 @@ export interface CoursesWithSectionsConfig extends CoursesConfig {
     /**
      * Filter sections by total class size (capacity).
      */
-    totalClassSize?: number;
+    totalClassSize?: TotalClassSizeFilter;
 
     /**
      * If true, only return sections with more then 0 open seats.
@@ -631,7 +634,7 @@ interface InstructorsConfig {
  * Fields:
  * - `courseCodes?: Set<string>`
  * - `prefix?: string`
- * - `totalClassSize?: number`
+ * - `totalClassSize?: TotalClassSizeFilter`
  * - `onlyOpen?: boolean`
  * - `instructor?: string`
  * - `limit?: number`
@@ -655,7 +658,7 @@ export interface SectionsConfig {
     /**
      * Filter sections by total class size (capacity).
      */
-    totalClassSize?: number;
+    totalClassSize?: TotalClassSizeFilter;
 
     /**
      * If true, only return sections with more then 0 open seats.

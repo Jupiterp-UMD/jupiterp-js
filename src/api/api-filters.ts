@@ -84,3 +84,9 @@ export class RatingFilter extends ApiFilter {
         super("ratings");
     }
 }
+
+export class TotalClassSizeFilter extends ApiFilter {
+    constructor() {
+        super("totalClassSize");
+    }
+}

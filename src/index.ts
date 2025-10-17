@@ -24,5 +24,9 @@ export {
     type DepartmentsResponse
 } from "./api/responses.js";
 export { SortBy } from "./api/sort-by.js";
-export { CreditFilter, RatingFilter } from "./api/api-filters.js";
+export {
+    CreditFilter,
+    RatingFilter,
+    TotalClassSizeFilter
+} from "./api/api-filters.js";
 export { GenEd } from "./common/course-traits.js";
