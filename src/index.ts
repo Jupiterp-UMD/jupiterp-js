@@ -10,6 +10,7 @@ export type { Department } from "./common/department.js";
 export type { CourseBasic, CourseMinified, Course } from "./common/course.js";
 export type {
     CoursesConfig,
+    CoursesWithSectionsConfig,
     InstructorsConfig,
     SectionsConfig,
 } from "./api/configs.js";

@@ -5,9 +5,9 @@ import {
     SortBy,
     GenEd,
     CoursesResponse,
-    CoursesMinifiedResponse
+    CoursesMinifiedResponse,
+    CoursesWithSectionsConfig
 } from "../../src";
-import { CoursesWithSectionsConfig } from "../../src/api/configs";
 
 describe("courses endpoints integration tests", () => {
     it("fetches basic course info by course codes", async () => {
