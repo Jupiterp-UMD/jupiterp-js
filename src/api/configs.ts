@@ -1,5 +1,5 @@
 import { CreditFilter, RatingFilter } from "./api-filters.js";
-import { GenEd } from "../common/course-traits.js";
+import { GenEd } from "../common/gen-eds.js";
 import { SortBy } from "./sort-by.js";
 
 /**

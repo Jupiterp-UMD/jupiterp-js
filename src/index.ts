@@ -29,4 +29,4 @@ export {
     RatingFilter,
     TotalClassSizeFilter
 } from "./api/api-filters.js";
-export { GenEd } from "./common/course-traits.js";
+export { GenEd } from "./common/gen-eds.js";

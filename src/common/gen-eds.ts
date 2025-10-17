@@ -59,4 +59,22 @@ export class GenEd {
             default: throw new Error(`Unknown GenEd code: ${code}`);
         }
     }
+
+    public static list(): GenEd[] {
+        return [
+            GenEd.FSAW,
+            GenEd.FSAR,
+            GenEd.FSMA,
+            GenEd.FSOC,
+            GenEd.FSPW,
+            GenEd.DSHS,
+            GenEd.DSHU,
+            GenEd.DSNS,
+            GenEd.DSNL,
+            GenEd.DSSP,
+            GenEd.DVCC,
+            GenEd.DVUP,
+            GenEd.SCIS
+        ];
+    }
 }

@@ -1,4 +1,4 @@
-import { GenEd } from "./course-traits.js";
+import { GenEd } from "./gen-eds.js";
 import { parseRawSection, type Section, type SectionRaw } from "./section.js";
 
 export interface CourseBasicRaw {
