@@ -81,7 +81,7 @@ export function coursesConfigToQueryParams(cfg: CoursesConfig): URLSearchParams 
         params.append("number", cfg.number);
     }
     if (cfg.genEds && cfg.genEds.size > 0) {
-        params.append("genEds", Array.from(cfg.genEds).join(","));
+        params.append("genEds", Array.from(cfg.genEds).map(ge => ge.code).join(","));
     }
     if (cfg.limit !== null && cfg.limit !== undefined) {
         params.append("limit", cfg.limit.toString());

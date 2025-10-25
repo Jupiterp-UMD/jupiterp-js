@@ -1,7 +1,8 @@
 import { RatingFilter } from "../../../src/api/api-filters";
-import { instructorsConfigToQueryParams, sectionsConfigToQueryParams } from "../../../src/api/configs";
+import { CoursesWithSectionsConfig, coursesWithSectionsConfigToQueryParams, instructorsConfigToQueryParams, sectionsConfigToQueryParams } from "../../../src/api/configs";
 import { test, expect, describe } from "@jest/globals";
 import { SortBy } from "../../../src/api/sort-by";
+import { GenEd } from "../../../src/common/gen-eds";
 
 describe("instructorsConfigToQueryParams", () => {
     test("converts valid config to query params correctly", () => {
@@ -34,4 +35,21 @@ describe("sectionsConfigToQueryParams", () => {
             "courseCodes=CMSC131%2CMATH140&limit=20&offset=5&sortBy=course_code.asc%2Csec_code.desc"
         )
     });
-}); 
+});
+
+describe("courseConfigToQueryParams", () => {
+    test("converts valid with sections config to query params correctly", () => {
+        const cfg: CoursesWithSectionsConfig = {
+            courseCodes: new Set(["CMSC131", "MATH140"]),
+            genEds: new Set([GenEd.DSHS, GenEd.SCIS]),
+            limit: 15,
+            offset: 0,
+            sortBy: new SortBy().ascending("course_code").descending("course_code"),
+        }
+
+        const params = coursesWithSectionsConfigToQueryParams(cfg);
+        expect(params.toString()).toBe(
+            "courseCodes=CMSC131%2CMATH140&genEds=DSHS%2CSCIS&limit=15&offset=0&sortBy=course_code.asc%2Ccourse_code.desc"
+        );
+    });
+});
