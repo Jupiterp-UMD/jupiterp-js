@@ -91,7 +91,7 @@ export function coursesConfigToQueryParams(cfg: CoursesConfig): URLSearchParams 
     }
     if (cfg.creditFilters) {
         for (const arg of cfg.creditFilters.argsArray()) {
-            params.append("creditFilters", arg);
+            params.append("credits", arg);
         }
     }
     if (cfg.sortBy && cfg.sortBy.length() > 0) {
