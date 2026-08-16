@@ -7,26 +7,59 @@ export type {
     Classtime
 } from "./common/section.js";
 export type { Department } from "./common/department.js";
+export type {
+    GradeCounts,
+    GradeSummary,
+    GradeGroupBy,
+    GradeTerm,
+    SectionGrades,
+    CourseGradeSummary,
+    CourseTermGradeSummary,
+    CourseInstructorGradeSummary,
+    InstructorGradeSummary,
+    InstructorTermGradeSummary
+} from "./common/grades.js";
+export type {
+    Review,
+    ReviewSubmission,
+    SubmitReviewResult,
+    VerifyReviewResult
+} from "./common/review.js";
 export type { CourseBasic, CourseMinified, Course } from "./common/course.js";
 export type {
     CoursesConfig,
     CoursesWithSectionsConfig,
+    GradesConfig,
+    GradeSummaryConfig,
     InstructorsConfig,
+    ReviewsConfig,
     SectionsConfig,
 } from "./api/configs.js";
 export {
     ApiResponse, 
+    parseContentRange,
     type InstructorsResponse, 
     type SectionsResponse, 
     type CoursesBasicResponse,
     type CoursesMinifiedResponse,
     type CoursesResponse,
-    type DepartmentsResponse
+    type DepartmentsResponse,
+    type GradesResponse,
+    type GradeTermsResponse,
+    type CourseGradeSummaryResponse,
+    type CourseTermGradeSummaryResponse,
+    type CourseInstructorGradeSummaryResponse,
+    type InstructorGradeSummaryResponse,
+    type InstructorTermGradeSummaryResponse,
+    type ReviewsResponse
 } from "./api/responses.js";
 export { SortBy } from "./api/sort-by.js";
 export {
     CreditFilter,
+    GpaFilter,
+    GradedFilter,
     RatingFilter,
+    TermFilter,
     TotalClassSizeFilter
 } from "./api/api-filters.js";
 export { GenEd } from "./common/gen-eds.js";
