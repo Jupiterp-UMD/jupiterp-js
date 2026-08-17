@@ -20,6 +20,7 @@ describe("section data conversion", () => {
             courseCode: "CMSC131",
             sectionCode: "0101",
             instructors: ["John Doe"],
+            instructorSlugs: [null],
             meetings: ["OnlineAsync"],
             openSeats: 5,
             totalSeats: 30,
@@ -45,6 +46,7 @@ describe("section data conversion", () => {
             courseCode: "CMSC131",
             sectionCode: "0101",
             instructors: ["John Doe", "Jane Smith"],
+            instructorSlugs: [null, null],
             meetings: ["TBA"],
             openSeats: 5,
             totalSeats: 30,
@@ -70,6 +72,7 @@ describe("section data conversion", () => {
             courseCode: "BMGT298M",
             sectionCode: "0101",
             instructors: ["Testudo Testudo"],
+            instructorSlugs: [null],
             meetings: ["Unknown"],
             openSeats: 0,
             totalSeats: 0,
@@ -98,6 +101,7 @@ describe("section data conversion", () => {
             courseCode: "ASTR320",
             sectionCode: "F010",
             instructors: ["Alice Johnson"],
+            instructorSlugs: [null],
             meetings: [
                 {
                     classtime: { days: "MWF", start: 10, end: 10.75 },

@@ -66,24 +66,42 @@ import type {
 } from "../common/review.js";
 
 /**
- * A client for interacting with the Jupiterp API v0.
+ * The URL `createDefault` connects to.
+ *
+ * Defined once so that the two client classes below cannot disagree about it.
+ *
+ * NOTE: this is currently pointed at a local API for development. It must read
+ * `https://api.jupiterp.com` before the package is published -- a release with
+ * this value ships a client that only works on the author's machine. The unit
+ * test asserting the production URL is expected to fail until then, and is the
+ * reminder.
  */
-export class JupiterpClientV0 {
+const DEFAULT_API_URL = 'http://localhost:8080';
+
+/**
+ * Shared implementation of the Jupiterp API client.
+ *
+ * The read endpoints (courses, sections, instructors, grades, departments) are
+ * served under both `/v1` and `/v0` by the same handlers, returning the same
+ * data. Which prefix an instance uses is fixed by its subclass, and is the only
+ * difference between {@link JupiterpClientV1} and {@link JupiterpClientV0}.
+ *
+ * Review endpoints are not versioned this way -- they have only ever existed
+ * under `/v1` -- so they are written as literal `/v1` paths throughout and are
+ * identical on both clients.
+ */
+abstract class JupiterpClientBase {
     readonly dbUrl: string;
 
-    public constructor(dbUrl: string) {
+    /** The path prefix this client sends read requests to. */
+    protected readonly readPrefix: string;
+
+    protected constructor(dbUrl: string, readPrefix: string) {
         if (!dbUrl) {
             throw new Error("Database URL must be provided");
         }
         this.dbUrl = dbUrl;
-    }
-
-    /**
-     * Creates a default client that connects to the official Jupiterp API.
-     * @returns A new instance of JupiterpClientV0.
-     */
-    public static createDefault(): JupiterpClientV0 {
-        return new JupiterpClientV0("https://api.jupiterp.com");
+        this.readPrefix = readPrefix;
     }
 
     /**
@@ -92,7 +110,7 @@ export class JupiterpClientV0 {
      * is reachable.
      */
     public async health(): Promise<Response> {
-        return fetch(this.dbUrl + "/v0/");
+        return fetch(this.dbUrl + this.readPrefix + "/");
     }
 
     /**
@@ -105,7 +123,7 @@ export class JupiterpClientV0 {
      */
     public async courses(cfg: CoursesConfig): Promise<CoursesBasicResponse> {
         const params = coursesConfigToQueryParams(cfg);
-        const url = `${this.dbUrl}/v0/courses?${params.toString()}`;
+        const url = `${this.dbUrl}${this.readPrefix}/courses?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
         const statusMessage = res.statusText;
@@ -124,7 +142,7 @@ export class JupiterpClientV0 {
      */
     public async minifiedCourses(cfg: CoursesConfig): Promise<CoursesMinifiedResponse> {
         const params = coursesConfigToQueryParams(cfg);
-        const url = `${this.dbUrl}/v0/courses/minified?${params.toString()}`;
+        const url = `${this.dbUrl}${this.readPrefix}/courses/minified?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
         const statusMessage = res.statusText;
@@ -148,7 +166,7 @@ export class JupiterpClientV0 {
     public async coursesWithSections(
                     cfg: CoursesWithSectionsConfig): Promise<CoursesResponse> {
         const params = coursesWithSectionsConfigToQueryParams(cfg);
-        const url = `${this.dbUrl}/v0/courses/withSections?${params.toString()}`;
+        const url = `${this.dbUrl}${this.readPrefix}/courses/withSections?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
         const statusMessage = res.statusText;
@@ -170,7 +188,7 @@ export class JupiterpClientV0 {
      */
     public async sections(cfg: SectionsConfig): Promise<SectionsResponse> {
         const params = sectionsConfigToQueryParams(cfg);
-        const url = `${this.dbUrl}/v0/sections?${params.toString()}`;
+        const url = `${this.dbUrl}${this.readPrefix}/sections?${params.toString()}`;
         const res = await fetch(url);
         const statusCode = res.status;
         const statusMessage = res.statusText;
@@ -186,7 +204,15 @@ export class JupiterpClientV0 {
 
     async instructorsGeneric(path: string, cfg: InstructorsConfig): Promise<InstructorsResponse> {
         const params = instructorsConfigToQueryParams(cfg);
-        const url = `${this.dbUrl}/v0/${path}?${params.toString()}`;
+
+        // Paging this endpoint is stable because the API applies a default
+        // `sortBy=slug.asc`, not because of anything done here. Without a total
+        // order, limit/offset over an unordered result skips and repeats rows:
+        // a full walk returned all 2,976 rows but only 2,336 distinct
+        // professors, a different ~640 missing each time. Fixed server-side so
+        // every client gets it, since a caller cannot tell from a
+        // correct-looking page that rows were dropped.
+        const url = `${this.dbUrl}${this.readPrefix}/${path}?${params.toString()}`;
         const resp = await fetch(url);
         const statusCode = resp.status;
         const statusMessage = resp.statusText;
@@ -228,7 +254,7 @@ export class JupiterpClientV0 {
      * of unique 4-letter department codes.
      */
     public async deptList(): Promise<DepartmentsResponse> {
-        const url = `${this.dbUrl}/v0/deptList`;
+        const url = `${this.dbUrl}${this.readPrefix}/deptList`;
         const res = await fetch(url);
         const statusCode = res.status;
         const statusMessage = res.statusText;
@@ -278,7 +304,7 @@ export class JupiterpClientV0 {
      */
     public async grades(cfg: GradesConfig): Promise<GradesResponse> {
         const params = gradesConfigToQueryParams(cfg);
-        return this.getJson<SectionGrades>(`${this.dbUrl}/v0/grades?${params.toString()}`);
+        return this.getJson<SectionGrades>(`${this.dbUrl}${this.readPrefix}/grades?${params.toString()}`);
     }
 
     /**
@@ -299,7 +325,7 @@ export class JupiterpClientV0 {
     public async courseGrades(cfg: GradeSummaryConfig): Promise<CourseGradeSummaryResponse> {
         const params = gradeSummaryConfigToQueryParams({ ...cfg, groupBy: "course" });
         return this.getJson<CourseGradeSummary>(
-            `${this.dbUrl}/v0/grades/summary?${params.toString()}`);
+            `${this.dbUrl}${this.readPrefix}/grades/summary?${params.toString()}`);
     }
 
     /**
@@ -316,7 +342,7 @@ export class JupiterpClientV0 {
     ): Promise<CourseTermGradeSummaryResponse> {
         const params = gradeSummaryConfigToQueryParams({ ...cfg, groupBy: "term" });
         return this.getJson<CourseTermGradeSummary>(
-            `${this.dbUrl}/v0/grades/summary?${params.toString()}`);
+            `${this.dbUrl}${this.readPrefix}/grades/summary?${params.toString()}`);
     }
 
     /**
@@ -336,7 +362,7 @@ export class JupiterpClientV0 {
     ): Promise<CourseInstructorGradeSummaryResponse> {
         const params = gradeSummaryConfigToQueryParams({ ...cfg, groupBy: "instructor" });
         return this.getJson<CourseInstructorGradeSummary>(
-            `${this.dbUrl}/v0/grades/summary?${params.toString()}`);
+            `${this.dbUrl}${this.readPrefix}/grades/summary?${params.toString()}`);
     }
 
     /**
@@ -361,7 +387,7 @@ export class JupiterpClientV0 {
     ): Promise<InstructorGradeSummaryResponse> {
         const params = gradeSummaryConfigToQueryParams({ ...cfg, groupBy: "instructorOverall" });
         return this.getJson<InstructorGradeSummary>(
-            `${this.dbUrl}/v0/grades/summary?${params.toString()}`);
+            `${this.dbUrl}${this.readPrefix}/grades/summary?${params.toString()}`);
     }
 
     /**
@@ -378,7 +404,7 @@ export class JupiterpClientV0 {
     ): Promise<InstructorTermGradeSummaryResponse> {
         const params = gradeSummaryConfigToQueryParams({ ...cfg, groupBy: "instructorTerm" });
         return this.getJson<InstructorTermGradeSummary>(
-            `${this.dbUrl}/v0/grades/summary?${params.toString()}`);
+            `${this.dbUrl}${this.readPrefix}/grades/summary?${params.toString()}`);
     }
 
     /**
@@ -391,7 +417,7 @@ export class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the terms.
      */
     public async gradeTerms(): Promise<GradeTermsResponse> {
-        return this.getJson<GradeTerm>(`${this.dbUrl}/v0/grades/terms`);
+        return this.getJson<GradeTerm>(`${this.dbUrl}${this.readPrefix}/grades/terms`);
     }
 
     /**
@@ -489,37 +515,6 @@ export class JupiterpClientV0 {
     }
 
     /**
-     * Edit a review, using the management key returned when it was confirmed.
-     *
-     * An edited review returns to moderation and must be approved again.
-     *
-     * @param id The review's id.
-     * @param manageKey The key returned by `verifyReview`.
-     * @param changes The fields to change.
-     * @returns A promise resolving to whether the edit was accepted.
-     */
-    public async editReview(
-        id: string,
-        manageKey: string,
-        changes: Partial<Pick<ReviewSubmission, "rating" | "expectedGrade" | "title" | "body">>
-    ): Promise<boolean> {
-        const res = await fetch(`${this.dbUrl}/v1/reviews/${encodeURIComponent(id)}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${manageKey}`,
-            },
-            body: JSON.stringify({
-                rating: changes.rating,
-                expected_grade: changes.expectedGrade,
-                title: changes.title,
-                body: changes.body,
-            }),
-        });
-        return res.ok;
-    }
-
-    /**
      * Withdraw a review, using the management key returned when it was
      * confirmed. The review's text is deleted.
      *
@@ -555,5 +550,48 @@ export class JupiterpClientV0 {
                 body: JSON.stringify({ reason, detail }),
             });
         return res.ok;
+    }
+}
+
+/**
+ * A client for the Jupiterp API, reading from `/v1`.
+ *
+ * This is the client to use. `/v1` is where the read surface lives.
+ */
+export class JupiterpClientV1 extends JupiterpClientBase {
+    public constructor(dbUrl: string) {
+        super(dbUrl, "/v1");
+    }
+
+    /**
+     * Creates a default client that connects to the official Jupiterp API.
+     * @returns A new instance of JupiterpClientV1.
+     */
+    public static createDefault(): JupiterpClientV1 {
+        return new JupiterpClientV1(DEFAULT_API_URL);
+    }
+}
+
+/**
+ * A client for the Jupiterp API, reading from `/v0`.
+ *
+ * @deprecated Use {@link JupiterpClientV1}. This class is kept because it is
+ * the export this package published in 1.x, and removing it would break every
+ * existing consumer for no benefit. It is not broken and is not scheduled for
+ * removal: `/v0` is a permanent alias for the same handlers, so this returns
+ * byte-identical data to {@link JupiterpClientV1}. The only reason to prefer
+ * the newer class is that `/v0` is no longer the documented prefix.
+ */
+export class JupiterpClientV0 extends JupiterpClientBase {
+    public constructor(dbUrl: string) {
+        super(dbUrl, "/v0");
+    }
+
+    /**
+     * Creates a default client that connects to the official Jupiterp API.
+     * @returns A new instance of JupiterpClientV0.
+     */
+    public static createDefault(): JupiterpClientV0 {
+        return new JupiterpClientV0(DEFAULT_API_URL);
     }
 }

@@ -1,4 +1,4 @@
-export { JupiterpClientV0 } from "./api/client.js";
+export { JupiterpClientV1, JupiterpClientV0 } from "./api/client.js";
 export type { Instructor } from "./common/instructor.js";
 export type {
     Section,

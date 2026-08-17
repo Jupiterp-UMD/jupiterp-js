@@ -77,6 +77,7 @@ describe("course data conversion", () => {
                     instructors: [
                         "Anwar Mamat"
                     ],
+                    instructorSlugs: [null],
                     meetings: [
                         {
                             classtime: {
