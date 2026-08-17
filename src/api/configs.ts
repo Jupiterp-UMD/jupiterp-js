@@ -297,6 +297,20 @@ export interface InstructorsConfig {
     count?: boolean;
 
     /**
+     * The columns to return, instead of the whole instructor row.
+     *
+     * An instructor row carries seventeen columns, most of them PlanetTerp
+     * provenance. A caller building a slug-to-rating lookup reads two of them
+     * and downloads the rest: over all active instructors that was ~1.3MB to
+     * use about 6% of it.
+     *
+     * An unrecognised column name is rejected by the API with a 400 rather
+     * than ignored, so a typo here fails loudly instead of quietly returning
+     * every column.
+     */
+    columns?: string[];
+
+    /**
      * Equalities and inequalities to filter instructors by their rating.
      */
     ratings?: RatingFilter;
@@ -333,6 +347,9 @@ export function instructorsConfigToQueryParams(cfg: InstructorsConfig): URLSearc
     }
     if (cfg.count) {
         params.append("count", "true");
+    }
+    if (cfg.columns && cfg.columns.length > 0) {
+        params.append("columns", cfg.columns.join(","));
     }
     if (cfg.limit !== null && cfg.limit !== undefined) {
         params.append("limit", cfg.limit.toString());
