@@ -70,13 +70,17 @@ import type {
  *
  * Defined once so that the two client classes below cannot disagree about it.
  *
- * NOTE: this is currently pointed at a local API for development. It must read
- * `https://api.jupiterp.com` before the package is published -- a release with
- * this value ships a client that only works on the author's machine. The unit
- * test asserting the production URL is expected to fail until then, and is the
- * reminder.
+ * This pointed at `http://localhost:8080` during development, guarded only by a
+ * unit test that was expected to fail. That guard does not hold on its own:
+ * `prepublishOnly` ran the build and not the tests, so nothing mechanically
+ * stopped a release from shipping a client that only worked on one machine.
+ * `prepublishOnly` now runs the unit suite, which makes this constant and that
+ * test enforce each other.
+ *
+ * To develop against a local API, construct the client directly --
+ * `new JupiterpClientV1('http://localhost:8080')` -- rather than editing this.
  */
-const DEFAULT_API_URL = 'http://localhost:8080';
+const DEFAULT_API_URL = 'https://api.jupiterp.com';
 
 /**
  * Shared implementation of the Jupiterp API client.

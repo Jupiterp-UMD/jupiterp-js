@@ -35,17 +35,22 @@ export interface Instructor {
     /**
      * The instructor's rating out of 5.
      *
-     * Retained as a string for compatibility with v0.x, where it was returned
-     * as one. Prefer `combined_rating`, which carries the same value as a
-     * number.
+     * Typed as a number, because that is what the API sends. This was declared
+     * `string | null` on the belief that v0 returned it as one; it never did.
+     * `instructors.average_rating` is a Postgres `real` and always has been --
+     * see migration 0020, which fixed a cast that assumed otherwise -- so
+     * PostgREST serialises it as a JSON number and every consumer written
+     * against the string type was wrong. `parseFloat` coerced it and hid the
+     * mismatch; any actual string method on it would have thrown.
      *
      * **The meaning of this field changed in v1.0.0.** It was PlanetTerp's
      * average rating; it is now the blend of Jupiterp's own reviews and the
      * PlanetTerp baseline described in `combined_rating`.
      *
-     * @deprecated Use `combined_rating`.
+     * @deprecated Use `combined_rating`, which is the same value under a name
+     * that says what it is.
      */
-    average_rating: string | null,
+    average_rating: number | null,
 
     /**
      * PlanetTerp's slug for this instructor, if they had one.

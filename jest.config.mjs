@@ -4,14 +4,17 @@ const base = {
   preset: 'ts-jest/presets/default-esm',
   testEnvironment: 'node',
   extensionsToTreatAsEsm: ['.ts'],
+  // ts-jest options belong in the transform tuple. Configuring them under
+  // `globals` is deprecated and printed a warning on every worker, on every
+  // run -- six copies of it before any test output.
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', { useESM: true }],
-  },
-  globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.test.json',
-      useESM: true,
-    },
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      {
+        tsconfig: 'tsconfig.test.json',
+        useESM: true,
+      },
+    ],
   },
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
