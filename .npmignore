@@ -1,4 +1,3 @@
-dist/
 .ts-jest/
 src/**/*.js
 src/**/*.d.ts

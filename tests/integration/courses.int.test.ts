@@ -41,7 +41,13 @@ describe("courses endpoints integration tests", () => {
             expect(resp.data[1].genEds?.length).toBe(2);
             expect(resp.data[1].genEds).toContain(GenEd.FSMA);
             expect(resp.data[1].genEds).toContain(GenEd.FSAR);
-            expect(resp.data[1].conditions).toStrictEqual(["Prerequisite: Minimum grade of C- in MATH115."]);
+            // Matched loosely on purpose. The registrar rewrites this prose
+            // without the requirement changing -- MATH140 gained "or must have
+            // math eligibility of MATH140..." mid-year -- and asserting the
+            // sentence verbatim fails on a copy edit. What matters is that the
+            // conditions parse into entries and still name the prerequisite.
+            expect(resp.data[1].conditions?.length).toBeGreaterThan(0);
+            expect(resp.data[1].conditions?.join(" ")).toContain("MATH115");
         }
     });
 
@@ -146,13 +152,22 @@ describe("courses endpoints integration tests", () => {
         expect(resp.statusCode).toBe(200);
         expect(resp.data).not.toBeNull();
         if (resp.data) {
-            expect(resp.data.length).toBe(1);
-            expect(resp.data[0].courseCode).toBe("CMSC624");
-            expect(resp.data[0].sections?.length).toBe(2);
-            if (resp.data[0].sections) {
-                expect(resp.data[0].sections[0].sectionCode).toBe("0101");
-                expect(resp.data[0].sections[1].sectionCode).toBe("PJ01");
+            // Which course they teach moves between terms -- this asserted
+            // CMSC624 and they are now on CMSC424. The invariants are that the
+            // filter narrowed to their courses only, and that both filters
+            // applied at once rather than one quietly winning.
+            expect(resp.data.length).toBeGreaterThan(0);
+            for (const course of resp.data) {
+                expect(course.courseCode.startsWith("CMSC")).toBe(true);
+
+                // Every section returned for a course must be one they teach.
+                // If the instructor filter were dropped, the course would come
+                // back with its full section list instead.
+                expect(course.sections?.length).toBeGreaterThan(0);
+                for (const section of course.sections ?? []) {
+                    expect(section.instructors).toContain("Daniel Abadi");
+                }
             }
         }
-    }); 
+    });
 });

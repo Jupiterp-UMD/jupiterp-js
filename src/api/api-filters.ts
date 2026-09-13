@@ -90,3 +90,45 @@ export class TotalClassSizeFilter extends ApiFilter {
         super("totalClassSize");
     }
 }
+
+/**
+ * A filter for the average GPA of a course, section, or instructor grouping.
+ * Can be used in a `GradesConfig` or `GradeSummaryConfig`.
+ * ```ts
+ * const gpaFilter = new GpaFilter().greaterThanOrEqualTo(3.5);
+ * ```
+ */
+export class GpaFilter extends ApiFilter {
+    constructor() {
+        super("gpa");
+    }
+}
+
+/**
+ * A filter for the number of students who received a letter grade. Can be used
+ * in a `GradesConfig`.
+ *
+ * Useful for excluding sections too small to read anything into: a three
+ * student section with a 4.0 average is not a signal.
+ * ```ts
+ * const gradedFilter = new GradedFilter().greaterThanOrEqualTo(20);
+ * ```
+ */
+export class GradedFilter extends ApiFilter {
+    constructor() {
+        super("graded");
+    }
+}
+
+/**
+ * A filter for the term a record belongs to, as a six-digit term code.
+ * Can be used in a `GradesConfig` or `GradeSummaryConfig`.
+ * ```ts
+ * const termFilter = new TermFilter().greaterThanOrEqualTo(202008);
+ * ```
+ */
+export class TermFilter extends ApiFilter {
+    constructor() {
+        super("term");
+    }
+}

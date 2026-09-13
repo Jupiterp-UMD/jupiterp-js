@@ -7,6 +7,7 @@ export interface SectionRaw {
     course_code: string;
     sec_code: string;
     instructors: string[];
+    instructor_slugs?: (string | null)[];
     meetings: string[];
     open_seats: number;
     total_seats: number;
@@ -29,9 +30,26 @@ export interface Section {
     sectionCode: string;
 
     /**
-     * A list of instructors teaching this section.
+     * A list of instructors teaching this section, as Testudo prints them.
      */
     instructors: string[];
+
+    /**
+     * The professor page slug for each entry in `instructors`, positionally
+     * aligned, `null` where the name has not been resolved to an instructor.
+     *
+     * Use this to link a professor rather than matching `instructors` against
+     * a name from another endpoint. Testudo's spelling and the canonical
+     * instructor record disagree often enough to matter -- `Aaron Kyei-Asare`
+     * against `Aaron Kyei-asare` -- and a name-based join silently drops those
+     * professors instead of failing.
+     *
+     * Optional: a Section rebuilt from saved localStorage data or constructed
+     * in a test has no resolved slugs, and pretending otherwise would force
+     * every such caller to invent a value. Absent means "unknown", which
+     * callers already handle by rendering the name unlinked.
+     */
+    instructorSlugs?: (string | null)[];
 
     /**
      * A list of meetings for this section. A meeting represents a group of
@@ -129,6 +147,10 @@ export function parseRawSection(raw: SectionRaw): Section {
         courseCode: raw.course_code,
         sectionCode: raw.sec_code,
         instructors: raw.instructors,
+        // Aligned to `instructors`, so a missing array becomes all-null rather
+        // than a shorter one: a short array would shift every later slug onto
+        // the wrong professor.
+        instructorSlugs: raw.instructor_slugs ?? raw.instructors.map(() => null),
         meetings: raw.meetings.length > 0 
                     ? raw.meetings.map(classMeetingFromString)
                     : ["No Sections"],

@@ -1,5 +1,32 @@
 # Jupiterp SDK
 
+> ### Upgrading from v0.x to v1.0.0
+>
+> Two things change in ways that will not produce a compile error.
+>
+> **Instructor slugs changed format.** `Instructor.slug` held PlanetTerp's slug
+> (`abadi_daniel`); it is now Jupiterp's own (`daniel-abadi`), and it is the
+> path segment for professor pages. A slug saved by an earlier version will
+> match nothing rather than fail loudly. PlanetTerp's value is preserved as
+> `pt_slug`, so old identifiers can still be resolved:
+>
+> ```ts
+> // Migrating a stored PlanetTerp slug to the current one
+> const resp = await client.instructors({ instructorSlugs: new Set(["abadi_daniel"]) });
+> // returns nothing in v1. Query the API for the instructor by name, or map
+> // through pt_slug, then store `slug` going forward.
+> ```
+>
+> **`average_rating` means something different.** It was PlanetTerp's rating.
+> It is now a blend of reviews submitted on Jupiterp and the frozen PlanetTerp
+> baseline, weighted by recency. The type is unchanged, so nothing breaks —
+> the number just means something else. Prefer `combined_rating`, which is the
+> same value as a `number`, and use `jupiterp_rating` / `pt_average_rating` if
+> you need the two sources separately.
+>
+> Everything else added in v1.0.0 is additive: grade distributions, instructor
+> name search, review reading and submission, and `ApiResponse.total`.
+
 The Jupiterp SDK is a TypeScript library that wraps the [Jupiterp API](https://api.jupiterp.com). The SDK allows for easy calls to the API and returns data in structured, typed formats. This library is currently in pre-release; expect breaking changes. To get updates on the SDK's progress, email [admin@jupiterp.com](mailto:admin@jupiterp.com).
 
 ## Adding Jupiterp SDK to your project
@@ -245,6 +272,78 @@ class JupiterpClientV0 {
      * @returns A promise that resolves to an ApiResponse containing the instructor data.
      */
     public async activeInstructors(cfg: InstructorsConfig): Promise<InstructorsResponse>;
+
+    /**
+     * Get grade distributions for individual sections. For almost every
+     * purpose you want one of the summary methods instead.
+     */
+    public async grades(cfg: GradesConfig): Promise<GradesResponse>;
+
+    /**
+     * Get grade distributions for courses, summed across every term on record.
+     */
+    public async courseGrades(cfg: GradeSummaryConfig): Promise<CourseGradeSummaryResponse>;
+
+    /**
+     * Get grade distributions for courses, broken out by term.
+     */
+    public async courseTermGrades(cfg: GradeSummaryConfig): Promise<CourseTermGradeSummaryResponse>;
+
+    /**
+     * Get grade distributions broken out by instructor within a course.
+     */
+    public async courseInstructorGrades(cfg: GradeSummaryConfig): Promise<CourseInstructorGradeSummaryResponse>;
+
+    /**
+     * Get one instructor's grades across every course they have taught.
+     */
+    public async instructorGrades(cfg: GradeSummaryConfig): Promise<InstructorGradeSummaryResponse>;
+
+    /**
+     * Get one instructor's grades broken out by term.
+     */
+    public async instructorTermGrades(cfg: GradeSummaryConfig): Promise<InstructorTermGradeSummaryResponse>;
+
+    /**
+     * Get every term for which grade data is available, newest first.
+     */
+    public async gradeTerms(): Promise<GradeTermsResponse>;
+
+    /**
+     * Get approved reviews for an instructor, newest first.
+     */
+    public async reviews(cfg: ReviewsConfig): Promise<ReviewsResponse>;
+
+    /**
+     * Submit a review. Not published until the reviewer confirms by email and
+     * a moderator approves it.
+     */
+    public async submitReview(review: ReviewSubmission): Promise<SubmitReviewResult>;
+
+    /**
+     * Confirm a review using the token from its verification email. Returns
+     * the management key exactly once.
+     */
+    public async verifyReview(token: string): Promise<VerifyReviewResult>;
+
+    /**
+     * Edit a review using its management key. Returns it to moderation.
+     */
+    public async editReview(
+        id: string,
+        manageKey: string,
+        changes: Partial<Pick<ReviewSubmission, "rating" | "expectedGrade" | "title" | "body">>
+    ): Promise<boolean>;
+
+    /**
+     * Withdraw a review using its management key.
+     */
+    public async withdrawReview(id: string, manageKey: string): Promise<boolean>;
+
+    /**
+     * Report a published review for breaching the content policy.
+     */
+    public async reportReview(id: string, reason: string, detail?: string): Promise<boolean>;
 }
 ```
 
@@ -254,25 +353,124 @@ class JupiterpClientV0 {
 
 ```ts
 /**
- * An individual instructor; contains their slug (unique id on PlanetTerp),
- * name, and average rating out of 5.
+ * An individual instructor.
+ *
+ * Instructor records originate from UMD's Testudo Schedule of Classes and from
+ * the Registrar's historical grade records. Ratings were seeded once from
+ * PlanetTerp as a historical baseline and are now accumulated on Jupiterp; see
+ * the `pt_*` and `jupiterp_*` fields below.
  */
 interface Instructor {
     /**
-     * The internal string used to identify an individual instructor, unique
-     * to that instructor. See PlanetTerp API spec for more info.
+     * The numeric identifier for this instructor.
+     *
+     * Stable across name changes and spelling variations, and the value to use
+     * when storing a reference to an instructor.
+     */
+    id: number,
+
+    /**
+     * The URL-safe identifier for this instructor, unique to them, used as the
+     * professor page path segment on Jupiterp (`/professor/shane-walsh`).
+     *
+     * **This changed in v1.0.0.** Through v0.8.5 this field held PlanetTerp's
+     * slug, in `lastname_firstname` form (`abadi_daniel`). It is now Jupiterp's
+     * own, in `first-last` form (`daniel-abadi`). Slugs saved from an earlier
+     * version will not match; PlanetTerp's value is preserved in `pt_slug` so
+     * that old identifiers can still be mapped across.
      */
     slug: string,
 
     /**
-     * The instructor's name as listed on PlanetTerp
+     * The instructor's name, as displayed.
      */
     name: string,
 
     /**
-     * The average rating given to that professor from reviews on PlanetTerp
+     * The instructor's rating out of 5.
+     *
+     * Retained as a string for compatibility with v0.x, where it was returned
+     * as one. Prefer `combined_rating`, which carries the same value as a
+     * number.
+     *
+     * **The meaning of this field changed in v1.0.0.** It was PlanetTerp's
+     * average rating; it is now the blend of Jupiterp's own reviews and the
+     * PlanetTerp baseline described in `combined_rating`.
+     *
+     * @deprecated Use `combined_rating`.
      */
     average_rating: string | null,
+
+    /**
+     * PlanetTerp's slug for this instructor, if they had one.
+     *
+     * Frozen at the time of the one-time import and never updated. Present so
+     * that identifiers saved before v1.0.0 can be resolved to the current
+     * `slug`.
+     */
+    pt_slug: string | null,
+
+    /**
+     * PlanetTerp's average rating for this instructor, out of 5, frozen at
+     * `pt_snapshot_at`. Null for instructors PlanetTerp had no record of.
+     */
+    pt_average_rating: number | null,
+
+    /**
+     * How many PlanetTerp reviews produced `pt_average_rating`. Used to weight
+     * the baseline: an average over three reviews should not carry the same
+     * weight as one over sixty.
+     */
+    pt_review_count: number | null,
+
+    /**
+     * When the PlanetTerp ratings were captured, as an ISO 8601 timestamp.
+     *
+     * The baseline's contribution to `combined_rating` decays from this point
+     * and reaches zero after about six years.
+     */
+    pt_snapshot_at: string | null,
+
+    /**
+     * The average rating from reviews submitted on Jupiterp, out of 5, with
+     * more recent reviews weighted more heavily. Null before this instructor
+     * has any approved reviews.
+     */
+    jupiterp_rating: number | null,
+
+    /**
+     * How many approved Jupiterp reviews this instructor has.
+     */
+    jupiterp_review_count: number,
+
+    /**
+     * The rating shown on Jupiterp, out of 5: the blend of `jupiterp_rating`
+     * and `pt_average_rating`, weighted by recency and review count and shrunk
+     * toward the global mean so that an instructor with three reviews does not
+     * outrank one with sixty on the strength of a small sample.
+     *
+     * Null when there is not enough behind it to be worth showing, which is a
+     * meaningfully different state from a low rating.
+     */
+    combined_rating: number | null,
+
+    /**
+     * Whether this instructor is teaching at least one section in the current
+     * term, according to Testudo.
+     */
+    is_active: boolean,
+
+    /**
+     * The earliest term this instructor is known to have taught in, as a
+     * six-digit term code (`202608`). Null if unknown.
+     */
+    first_seen_term: number | null,
+
+    /**
+     * The most recent term this instructor is known to have taught in, as a
+     * six-digit term code. Null if unknown.
+     */
+    last_seen_term: number | null,
 }
 ```
 
@@ -481,6 +679,382 @@ export interface Department {
 }
 ```
 
+#### Grade Data
+
+```ts
+/**
+ * Grade distributions from the University of Maryland's Office of the
+ * Registrar, obtained through a public records request.
+ *
+ * Two limitations apply to everything in this file and are worth surfacing to
+ * anyone reading these numbers:
+ *
+ * - **Fall and Spring terms only**, from 2010 onward. Winter and Summer are
+ *   not included, so an instructor who teaches only in the summer has no grade
+ *   data at all rather than a low number.
+ * - **About a quarter of sections carry no instructor** in the source records.
+ *   Where a section clearly belongs to a named lecture the attribution is
+ *   carried across; where it does not, the section is left unattributed. An
+ *   instructor's totals may therefore not cover everything they taught.
+ */
+
+/**
+ * The fifteen grade buckets, exactly as the Registrar reported them.
+ */
+interface GradeCounts {
+    a_plus: number,
+    a: number,
+    a_minus: number,
+    b_plus: number,
+    b: number,
+    b_minus: number,
+    c_plus: number,
+    c: number,
+    c_minus: number,
+    d_plus: number,
+    d: number,
+    d_minus: number,
+    f: number,
+    w: number,
+    other: number,
+}
+
+/**
+ * A grade distribution, summed over some grouping of sections.
+ *
+ * There are two denominators here and they are not interchangeable:
+ *
+ * - `graded` counts students who received a letter grade, A+ through F. This
+ *   is the GPA denominator, and **withdrawals are not in it** — matching how a
+ *   transcript GPA is computed.
+ * - `total` is enrollment as reported. Before Fall 2017 it can exceed the sum
+ *   of the fifteen buckets, because the older reports left some outcomes
+ *   uncategorized. It is therefore not comparable across eras and should not
+ *   be used as a percentage denominator.
+ *
+ * For a distribution bar chart where the segments should sum to 100% with
+ * withdrawals visible, use `graded + w`.
+ */
+interface GradeSummary extends GradeCounts {
+    /**
+     * Enrollment as reported. See the note above before dividing by this.
+     */
+    total: number,
+
+    /**
+     * Students who received a letter grade. The GPA denominator; excludes
+     * withdrawals.
+     */
+    graded: number,
+
+    /**
+     * Average GPA on the UMD 4.0 scale, or null when nobody in the grouping
+     * received a letter grade.
+     *
+     * A GPA computed from very few students is noise. Consider not displaying
+     * one below roughly 20 graded students, or use the `minStudents` option on
+     * the request to exclude them.
+     */
+    gpa: number | null,
+
+    /**
+     * How many sections this distribution sums over.
+     */
+    section_count: number,
+}
+
+/**
+ * One course, summed across every term on record.
+ * Returned by `gradeSummary` with `groupBy: "course"`.
+ */
+interface CourseGradeSummary extends GradeSummary {
+    course_code: string,
+    term_count: number,
+    first_term: number,
+    last_term: number,
+}
+
+/**
+ * One course in one term.
+ * Returned by `gradeSummary` with `groupBy: "term"`.
+ */
+interface CourseTermGradeSummary extends GradeSummary {
+    course_code: string,
+    term: number,
+}
+
+/**
+ * One instructor's grades within one course.
+ * Returned by `gradeSummary` with `groupBy: "instructor"`.
+ */
+interface CourseInstructorGradeSummary extends GradeSummary {
+    course_code: string,
+    instructor_id: number,
+    instructor: string,
+    instructor_slug: string,
+    term_count: number,
+    first_term: number,
+    last_term: number,
+}
+
+/**
+ * One instructor, summed across every course they have taught.
+ * Returned by `gradeSummary` with `groupBy: "instructorOverall"`.
+ */
+interface InstructorGradeSummary extends GradeSummary {
+    instructor_id: number,
+    instructor: string,
+    instructor_slug: string,
+    course_count: number,
+    term_count: number,
+    first_term: number,
+    last_term: number,
+}
+
+/**
+ * One instructor in one term.
+ * Returned by `gradeSummary` with `groupBy: "instructorTerm"`.
+ */
+interface InstructorTermGradeSummary extends GradeSummary {
+    instructor_id: number,
+    instructor: string,
+    instructor_slug: string,
+    term: number,
+    course_count: number,
+}
+
+/**
+ * A single section's grade distribution, as returned by `grades`.
+ */
+interface SectionGrades extends GradeCounts {
+    /**
+     * Six-digit term code: the year followed by the month the term begins,
+     * so `202608` is Fall 2026 and `202601` is Spring 2026.
+     */
+    term: number,
+    course_code: string,
+    sec_code: string,
+
+    /**
+     * The instructor exactly as the Registrar printed them, in
+     * "Last, First Middle" order. Null where the export named nobody.
+     * This is the audit trail rather than the value to display.
+     */
+    instructor: string | null,
+
+    /**
+     * The effective instructor in "First Middle Last" order. May be carried
+     * from another section of the same course; check `instructor_source`
+     * before relying on it.
+     */
+    instructor_name: string | null,
+
+    /**
+     * The resolved instructor, or null where the name could not be matched to
+     * one confidently. Join on this rather than on the name strings.
+     */
+    instructor_id: number | null,
+
+    /**
+     * How `instructor_name` was arrived at, in descending order of confidence:
+     *
+     * - `reported` — named on this row by the Registrar.
+     * - `testudo` — taken from Testudo's schedule for this exact section, where
+     *   the Registrar left it blank. Testudo lists the *scheduled* instructor,
+     *   who is not always who taught or graded the course.
+     * - `lead` — carried from the lead section of the same lecture group, i.e.
+     *   the discussion and lab sections of a lecture.
+     * - `course` — carried from elsewhere in the course. Demonstrably wrong
+     *   sometimes, and excluded from the default aggregates.
+     * - `null` — no section of the course was ever named.
+     */
+    instructor_source: "reported" | "testudo" | "lead" | "course" | null,
+
+    total: number,
+    graded: number,
+    gpa: number | null,
+}
+
+/**
+ * One term for which grade data exists, as returned by `gradeTerms`.
+ */
+interface GradeTerm {
+    term: number,
+    section_count: number,
+    course_count: number,
+    total: number,
+    graded: number,
+    gpa: number | null,
+}
+
+/**
+ * How to group the results of a `gradeSummary` request.
+ *
+ * `instructorOverall` and `instructorTerm` aggregate across every course, so
+ * they take no course filter — passing one returns a 400 rather than silently
+ * ignoring it.
+ */
+type GradeGroupBy =
+    | "course"
+    | "term"
+    | "instructor"
+    | "instructorOverall"
+    | "instructorTerm";
+```
+
+#### Review Data
+
+```ts
+/**
+ * Student reviews of instructors, submitted on Jupiterp.
+ *
+ * Reviews are pre-moderated: nothing submitted is publicly readable until a
+ * moderator approves it, so `reviews()` only ever returns approved content.
+ * The submitter's identity is never exposed — the API stores only an
+ * irreversible hash of their email address, and it is not part of this type.
+ */
+
+/**
+ * A published review.
+ */
+interface Review {
+    id: string,
+
+    instructor_id: number,
+    instructor_slug: string,
+
+    /**
+     * The course being reviewed, or null for a review of the instructor
+     * generally rather than of one course.
+     */
+    course_code: string | null,
+
+    /**
+     * Six-digit term code, or null if the reviewer did not say.
+     */
+    term: number | null,
+
+    /**
+     * The rating, from 1 to 5 **in half steps**: 1, 1.5, 2, and so on.
+     *
+     * A decimal, never an integer — a client that types this as an int will
+     * silently truncate half the possible values.
+     */
+    rating: number,
+
+    /**
+     * The grade the reviewer said they got or expected. One of the letter
+     * grades, `W`, or `Other`. Null if they did not say.
+     */
+    expected_grade: string | null,
+
+    title: string | null,
+    body: string | null,
+
+    submitted_at: string,
+    edited_at: string | null,
+}
+
+/**
+ * A review to submit through `submitReview`.
+ */
+interface ReviewSubmission {
+    /**
+     * The instructor being reviewed, by their Jupiterp slug.
+     */
+    instructorSlug: string,
+
+    /**
+     * The course, if the review is about one. Four letters and three digits,
+     * optionally with a trailing letter: `CMSC132`, `MATH140`.
+     */
+    courseCode?: string,
+
+    /**
+     * The term the reviewer took the course, as a six-digit term code.
+     *
+     * Must be a Fall (`YYYY08`) or Spring (`YYYY01`) term: the API rejects
+     * Winter and Summer, because the rest of Jupiterp's data covers only those
+     * two and a review against a term nothing else can represent is not useful.
+     */
+    term?: number,
+
+    /**
+     * 1 to 5 in half steps. `4.5` is valid; `4.3` is rejected.
+     */
+    rating: number,
+
+    expectedGrade?: string,
+
+    /**
+     * At most 120 characters.
+     */
+    title?: string,
+
+    /**
+     * At most 5000 characters.
+     */
+    body?: string,
+
+    /**
+     * A `terpmail.umd.edu` or `umd.edu` address.
+     *
+     * Used once to confirm the reviewer is at UMD and to prevent duplicate
+     * reviews of the same course. The API stores only an irreversible hash of
+     * it and never displays it. A confirmation link is emailed to this address
+     * and the review is not submitted until it is clicked.
+     */
+    email: string,
+
+    /**
+     * A Cloudflare Turnstile token. Required by the public API.
+     */
+    captchaToken?: string,
+}
+
+/**
+ * The result of a submission.
+ *
+ * Note that this is deliberately uninformative about whether the address had
+ * already reviewed this instructor: the API answers identically either way,
+ * because a distinguishable response would let anyone use the endpoint to
+ * find out whether a particular person reviewed a particular professor.
+ */
+interface SubmitReviewResult {
+    ok: boolean,
+
+    /**
+     * A message suitable for showing to the person who submitted. Present on
+     * failure only.
+     */
+    error?: string,
+
+    /**
+     * True when the caller was rate limited and should wait rather than change
+     * anything about the request.
+     */
+    rateLimited?: boolean,
+}
+
+/**
+ * The result of confirming an emailed verification link.
+ */
+interface VerifyReviewResult {
+    ok: boolean,
+
+    /**
+     * The key that lets the reviewer edit or withdraw this review later,
+     * returned exactly once.
+     *
+     * There is deliberately nothing linking it back to a person, so it cannot
+     * be recovered. Show it to the reviewer and tell them to keep it.
+     */
+    manageKey?: string,
+
+    message: string,
+}
+```
+
 #### Request Configs
 
 ##### CoursesConfig
@@ -584,9 +1158,6 @@ export interface CoursesWithSectionsConfig extends CoursesConfig {
 ##### InstructorsConfig
 
 ```ts
-/**
- * Configuration for a request to instructors endpoints.
- */
 interface InstructorsConfig {
     /**
      * A set of instructor names to get results for. Cannot set both
@@ -595,16 +1166,45 @@ interface InstructorsConfig {
     instructorNames?: Set<string>;
 
     /**
-     * A set of instructor slugs to get results for. Slugs are the internal
-     * identifier used to distinguish an instructor and are unique to each
-     * instructor. See PlanetTerp API spec for more info. Cannot set both
-     * instructorNames and instructorSlugs.
+     * A set of instructor slugs to get results for. Slugs are the identifier
+     * used in professor page URLs and are unique to each instructor. Cannot
+     * set both instructorNames and instructorSlugs.
+     *
+     * **Slug format changed in v1.0.0.** These are now Jupiterp's own slugs
+     * (`daniel-abadi`), not PlanetTerp's (`abadi_daniel`). Slugs stored by an
+     * earlier version of this library will not match anything.
      */
     instructorSlugs?: Set<string>;
 
     /**
-     * Equalities and inequalities to filter instructors by their average
-     * rating on PlanetTerp.
+     * A partial name to search for, matched case-insensitively anywhere in the
+     * instructor's name.
+     *
+     * Accents and punctuation are ignored on both sides, so "obrien" finds
+     * "O'Brien" and "jose" finds "José". This is the way to find an instructor
+     * by partial name; the alternative is downloading every instructor and
+     * filtering client-side, which does not scale.
+     */
+    nameSearch?: string;
+
+    /**
+     * If true, return only instructors teaching at least one section in the
+     * current term.
+     */
+    activeOnly?: boolean;
+
+    /**
+     * If true, the total number of matching instructors is returned in
+     * `ApiResponse.total`, regardless of how many this page contains.
+     *
+     * Costs an extra aggregate over the filtered set on the server, so it is
+     * off by default. Set it when you need to render "1-50 of 4,812" or know
+     * how many pages exist.
+     */
+    count?: boolean;
+
+    /**
+     * Equalities and inequalities to filter instructors by their rating.
      */
     ratings?: RatingFilter;
 
@@ -714,12 +1314,17 @@ class ApiResponse<T> {
     public data: T[] | null;
 
     /**
-     * The data returned by the API, or null if there was an error.
+     * The total number of records matching the request, ignoring paging.
+     *
+     * Null unless the request asked for it by setting `count: true`, since
+     * counting costs the server an extra aggregate. Use it to render
+     * "1-50 of 4,812" or to know how many pages exist.
      */
-    public data: T[] | null;
+    public total: number | null;
 
     constructor(statusCode: number, statusMessage: string,
-                data: T[] | null, errorBody?: string);
+                data: T[] | null, errorBody?: string,
+                total?: number | null);
 
     /**
      * Checks if the response was successful.
