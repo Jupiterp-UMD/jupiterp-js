@@ -16,6 +16,7 @@ import type {
     SectionGrades,
 } from "../common/grades.js";
 import type { Review } from "../common/review.js";
+import type { CatalogTerm } from "../common/term.js";
 
 /**
  * A generic API response wrapper that includes status information and the data
@@ -158,6 +159,11 @@ export type InstructorTermGradeSummaryResponse = ApiResponse<InstructorTermGrade
  * A response to a request for the terms grade data is available for.
  */
 export type GradeTermsResponse = ApiResponse<GradeTerm>;
+
+/**
+ * A response to a request for the term course and section data is from.
+ */
+export type TermResponse = ApiResponse<CatalogTerm>;
 
 /**
  * A response to a request for an instructor's reviews.

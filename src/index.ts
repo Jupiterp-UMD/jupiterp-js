@@ -7,6 +7,7 @@ export type {
     Classtime
 } from "./common/section.js";
 export type { Department } from "./common/department.js";
+export type { CatalogTerm } from "./common/term.js";
 export type {
     GradeCounts,
     GradeSummary,
@@ -46,6 +47,7 @@ export {
     type DepartmentsResponse,
     type GradesResponse,
     type GradeTermsResponse,
+    type TermResponse,
     type CourseGradeSummaryResponse,
     type CourseTermGradeSummaryResponse,
     type CourseInstructorGradeSummaryResponse,

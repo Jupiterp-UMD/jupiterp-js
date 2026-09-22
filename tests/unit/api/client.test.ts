@@ -197,4 +197,26 @@ describe("JupiterpClientV0", () => {
       { deptCode: "ENEE", name: "Electrical Engineering" },
     ]);
   });
+
+  test("fetches the catalog term", async () => {
+    const mockTerm = [{ term: 202608, updated_at: "2026-09-21T23:35:02.418562+00:00" }];
+    fetchMock.mockResolvedValueOnce(new Response(JSON.stringify(mockTerm), { status: 200, statusText: "OK" }));
+
+    const client = new JupiterpClientV0("https://custom-url.com");
+    const resp = await client.term();
+
+    expect(global.fetch).toHaveBeenCalledWith("https://custom-url.com/v0/term");
+    expect(resp.ok()).toBe(true);
+    expect(resp.data).toEqual(mockTerm);
+  });
+
+  test("returns no term before one has been recorded", async () => {
+    fetchMock.mockResolvedValueOnce(new Response("[]", { status: 200, statusText: "OK" }));
+
+    const client = new JupiterpClientV0("https://custom-url.com");
+    const resp = await client.term();
+
+    expect(resp.ok()).toBe(true);
+    expect(resp.data).toEqual([]);
+  });
 });

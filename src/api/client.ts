@@ -47,7 +47,8 @@ import { ApiResponse,
     parseContentRange,
     type ReviewsResponse,
     type SectionsResponse,
-    type DepartmentsResponse
+    type DepartmentsResponse,
+    type TermResponse
 } from "./responses.js";
 import type {
     CourseGradeSummary,
@@ -64,6 +65,7 @@ import type {
     SubmitReviewResult,
     VerifyReviewResult
 } from "../common/review.js";
+import type { CatalogTerm } from "../common/term.js";
 
 /**
  * The URL `createDefault` connects to.
@@ -278,8 +280,20 @@ abstract class JupiterpClientBase {
     }
 
     /**
-     * Shared plumbing for the grade endpoints, which all return plain JSON
-     * arrays and may carry a total in `Content-Range`.
+     * Get the term that course and section data is from.
+     *
+     * `data` holds one element when the API has a term on record, and is empty
+     * before the first scrape has recorded one.
+     *
+     * @returns A promise that resolves to an ApiResponse containing the term.
+     */
+    public async term(): Promise<TermResponse> {
+        return this.getJson<CatalogTerm>(`${this.dbUrl}${this.readPrefix}/term`);
+    }
+
+    /**
+     * Shared plumbing for the endpoints that return plain JSON arrays, which
+     * may carry a total in `Content-Range`.
      */
     private async getJson<T>(url: string): Promise<ApiResponse<T>> {
         const res = await fetch(url);

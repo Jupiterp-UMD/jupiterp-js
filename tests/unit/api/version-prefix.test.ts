@@ -90,6 +90,12 @@ describe("read prefix by client version", () => {
                 call: (c) => c.sections({ courseCodes: new Set(["CMSC131"]), limit: 1, offset: 0, sortBy: new SortBy().ascending("course_code") }),
                 body: [],
             },
+            {
+                name: "term",
+                path: "/term",
+                call: (c) => c.term(),
+                body: [],
+            },
         ];
 
         for (const endpoint of endpoints) {
