@@ -6,6 +6,7 @@ import {
     TermFilter,
 } from "./api-filters.js";
 import type { GradeGroupBy } from "../common/grades.js";
+import type { Review } from "../common/review.js";
 import { GenEd } from "../common/gen-eds.js";
 import { SortBy } from "./sort-by.js";
 
@@ -707,6 +708,9 @@ export function gradeSummaryConfigToQueryParams(cfg: GradeSummaryConfig): URLSea
  * Fields:
  * - `instructorSlug: string`
  * - `courseCode?: string`
+ * - `sort?: ReviewSort`
+ * - `rating?: number`
+ * - `source?: 'jupiterp' | 'planetterp'`
  * - `limit?: number`
  * - `offset?: number`
  */
@@ -722,6 +726,26 @@ export interface ReviewsConfig {
     courseCode?: string;
 
     /**
+     * The order to return reviews in; defaults to `newest`. The rating sorts
+     * break ties newest first. Every order is total, so paging through one
+     * with `offset` returns each review exactly once.
+     */
+    sort?: ReviewSort;
+
+    /**
+     * Restrict to one star bucket, 1 to 5: `4` is 4.0 up to but not including
+     * 5.0, so a 4.5 counts as four stars. Any other value is rejected by the
+     * API.
+     */
+    rating?: number;
+
+    /**
+     * Restrict to reviews submitted on Jupiterp, or to those imported from
+     * PlanetTerp.
+     */
+    source?: Review['source'];
+
+    /**
      * The number of results to return. Defaults to 25.
      */
     limit?: number;
@@ -732,11 +756,25 @@ export interface ReviewsConfig {
     offset?: number;
 }
 
+/**
+ * The orders the reviews endpoint accepts.
+ */
+export type ReviewSort = "newest" | "oldest" | "highest" | "lowest";
+
 export function reviewsConfigToQueryParams(cfg: ReviewsConfig): URLSearchParams {
     const params = new URLSearchParams();
     params.append("instructorSlug", cfg.instructorSlug);
     if (cfg.courseCode) {
         params.append("courseCode", cfg.courseCode);
+    }
+    if (cfg.sort) {
+        params.append("sort", cfg.sort);
+    }
+    if (cfg.rating !== null && cfg.rating !== undefined) {
+        params.append("rating", cfg.rating.toString());
+    }
+    if (cfg.source) {
+        params.append("source", cfg.source);
     }
     if (cfg.limit !== null && cfg.limit !== undefined) {
         params.append("limit", cfg.limit.toString());

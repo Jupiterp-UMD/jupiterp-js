@@ -129,6 +129,23 @@ describe("reviewsConfigToQueryParams", () => {
         expect(params.get("limit")).toBe("10");
         expect(params.get("offset")).toBe("20");
     });
+
+    it("serializes sort, rating and source", () => {
+        const params = reviewsConfigToQueryParams({
+            instructorSlug: "shane-walsh",
+            sort: "highest",
+            rating: 4,
+            source: "planetterp",
+        });
+        expect(params.get("sort")).toBe("highest");
+        expect(params.get("rating")).toBe("4");
+        expect(params.get("source")).toBe("planetterp");
+    });
+
+    it("omits sort, rating and source when they were not set", () => {
+        const params = reviewsConfigToQueryParams({ instructorSlug: "shane-walsh" });
+        expect(params.toString()).toBe("instructorSlug=shane-walsh");
+    });
 });
 
 describe("parseContentRange", () => {
