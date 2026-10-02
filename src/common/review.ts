@@ -46,6 +46,13 @@ export interface Review {
 
     submitted_at: string,
     edited_at: string | null,
+
+    /**
+     * `jupiterp` for a review submitted to Jupiterp, `planetterp` for one
+     * imported from PlanetTerp. Imported reviews are not counted in
+     * `jupiterp_rating` and cannot be reported.
+     */
+    source: 'jupiterp' | 'planetterp',
 }
 
 /**
