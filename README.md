@@ -310,7 +310,8 @@ class JupiterpClientV0 {
     public async gradeTerms(): Promise<GradeTermsResponse>;
 
     /**
-     * Get approved reviews for an instructor, newest first.
+     * Get approved reviews for an instructor, newest first unless `cfg.sort`
+     * says otherwise, optionally filtered by course, star rating or source.
      */
     public async reviews(cfg: ReviewsConfig): Promise<ReviewsResponse>;
 
@@ -953,6 +954,13 @@ interface Review {
 
     submitted_at: string,
     edited_at: string | null,
+
+    /**
+     * `jupiterp` for a review submitted to Jupiterp, `planetterp` for one
+     * imported from PlanetTerp. Imported reviews are not counted in
+     * `jupiterp_rating` and cannot be reported.
+     */
+    source: 'jupiterp' | 'planetterp',
 }
 
 /**
@@ -1286,6 +1294,65 @@ export interface SectionsConfig {
      */
     sortBy?: SortBy;
 }
+```
+
+##### ReviewsConfig
+
+```ts
+/**
+ * Configuration for a request to `/v1/reviews`.
+ */
+interface ReviewsConfig {
+    /**
+     * Whose reviews to return. Required.
+     */
+    instructorSlug: string;
+
+    /**
+     * Restrict to reviews about one course.
+     */
+    courseCode?: string;
+
+    /**
+     * The order to return reviews in; defaults to `newest`. The rating sorts
+     * break ties newest first. Every order is total, so paging through one
+     * with `offset` returns each review exactly once.
+     */
+    sort?: 'newest' | 'oldest' | 'highest' | 'lowest';
+
+    /**
+     * Restrict to one star bucket, 1 to 5: `4` is 4.0 up to but not including
+     * 5.0, so a 4.5 counts as four stars. Any other value is rejected by the
+     * API.
+     */
+    rating?: number;
+
+    /**
+     * Restrict to reviews submitted on Jupiterp, or to those imported from
+     * PlanetTerp.
+     */
+    source?: 'jupiterp' | 'planetterp';
+
+    /**
+     * The number of results to return. Defaults to 25.
+     */
+    limit?: number;
+
+    /**
+     * How many records to skip when returning results; defaults to 0
+     */
+    offset?: number;
+}
+```
+
+For example, a professor's lowest-rated reviews of one course:
+
+```ts
+const resp = await client.reviews({
+    instructorSlug: "larry-herman",
+    courseCode: "CMSC216",
+    sort: "lowest",
+});
 ```
 
 #### Request Responses

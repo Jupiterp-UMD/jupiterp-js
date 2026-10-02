@@ -33,6 +33,7 @@ export type {
     GradeSummaryConfig,
     InstructorsConfig,
     ReviewsConfig,
+    ReviewSort,
     SectionsConfig,
 } from "./api/configs.js";
 export {

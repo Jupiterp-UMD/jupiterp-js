@@ -425,7 +425,8 @@ abstract class JupiterpClientBase {
     }
 
     /**
-     * Get approved reviews for an instructor, newest first.
+     * Get approved reviews for an instructor, newest first unless `cfg.sort`
+     * says otherwise, optionally filtered by course, star rating or source.
      *
      * Only approved reviews are ever returned: reviews are moderated before
      * they are published, and the endpoint cannot express an unapproved one.
